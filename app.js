@@ -8,6 +8,7 @@ const ICON = {
   check: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>',
   x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>',
   pen: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5l3 3L6 13l-3.5.5L3 10z"/></svg>',
+  copy: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1"/><path d="M10.5 3.5v-1h-8v8h1"/></svg>',
   undo: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 3L2.5 6l3 3"/><path d="M2.5 6H10a3.5 3.5 0 010 7H7"/></svg>',
   warn: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l6.5 11.5h-13z"/><path d="M8 6.5v3M8 11.6v.1"/></svg>',
   up: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l4-4 4 4"/></svg>',
@@ -349,6 +350,7 @@ function renderSheet() {
         <button class="btn" data-act="edit" ${c.at < 0 ? 'disabled' : ''}>${ICON.pen}Edit <kbd>E</kbd></button>
         <button class="btn reject" data-act="reject" ${c.at < 0 ? 'disabled' : ''}>${ICON.x}Reject <kbd>R</kbd></button>
         ${d.status !== 'pending' ? `<button class="btn quiet" data-act="reset">${ICON.undo}Undo <kbd>U</kbd></button>` : ''}
+        ${d.status !== 'rejected' && c.at >= 0 ? `<button class="btn quiet" data-act="copy" title="Copy the ${d.status === 'edited' ? 'edited' : 'proposed'} text without Markdown, for pasting into Word">${ICON.copy}<span>Copy text</span> <kbd>C</kbd></button>` : ''}
       </div>
       <label class="note"><span class="sr-only">Note</span><input id="note" placeholder="Note for this decision (optional). Press N to write." value="${esc(d.note || '')}" ${d.status === 'pending' ? 'disabled title="Decide first, then add a note."' : ''}></label>
       ${d.at ? `<span class="decided-by">${esc(MARK[d.status])} · ${d.by ? esc(d.by) + ' · ' : ''}${new Date(d.at).toLocaleString()}</span>` : ''}
@@ -385,7 +387,7 @@ function renderSources() {
       : `<p class="no-source">No source. ${c.significance === 'incremental' ? 'The agent rates this change incremental.' : 'Treat this change as weak until you find a source.'}</p>`}
     <div class="keys" aria-label="Keyboard shortcuts">
       <kbd>J</kbd><span>Next change</span><kbd>K</kbd><span>Previous change</span>
-      <kbd>A</kbd><span>Approve</span><kbd>E</kbd><span>Edit</span><kbd>R</kbd><span>Reject</span><kbd>U</kbd><span>Undo decision</span>
+      <kbd>A</kbd><span>Approve</span><kbd>E</kbd><span>Edit</span><kbd>R</kbd><span>Reject</span><kbd>U</kbd><span>Undo decision</span><kbd>C</kbd><span>Copy text for Word</span>
       <kbd>S</kbd><span>Marked text or side by side</span><kbd>1 2 3</kbd><span>Changes, Assessment, Full text</span>
     </div>`;
 }
@@ -470,7 +472,7 @@ function bind() {
     const sp = e.target.closest('[data-split]'); if (sp) return vt('same', () => { S.split = sp.dataset.split === '1'; renderSheet(); });
     const act = e.target.closest('[data-act]')?.dataset.act; if (!act) return;
     ({
-      approve: () => decide('approved'), reject: () => decide('rejected'), reset: () => decide('pending'),
+      approve: () => decide('approved'), reject: () => decide('rejected'), reset: () => decide('pending'), copy: copyText,
       edit: startEdit, saveEdit, cancelEdit,
       prev: () => step(-1), next: () => step(1),
     })[act]?.();
@@ -487,6 +489,16 @@ function bind() {
 }
 
 function startEdit() { if (current()?.at >= 0) vt('same', () => { S.editing = true; S.fresh = null; renderSheet(); }); }
+// The guides live in Word: copy the accepted wording as plain text (Markdown rendered, then tags dropped).
+async function copyText() {
+  const c = current(), d = D(c.id), label = $('[data-act="copy"] span');
+  if (!label) return;
+  const html = md(d.status === 'edited' ? d.text : c.proposed);
+  const text = new DOMParser().parseFromString(html, 'text/html').body.textContent.replace(/\n{3,}/g, '\n\n').trim();
+  try { await navigator.clipboard.writeText(text); label.textContent = 'Copied'; }
+  catch { label.textContent = 'Copy failed: select the text by hand'; }
+  setTimeout(() => { if (label.isConnected) label.textContent = 'Copy text'; }, 1600);
+}
 function cancelEdit() { vt('same', () => { S.editing = false; renderSheet(); }); }
 function saveEdit() {
   const c = current(), text = $('#editText').value;
@@ -506,7 +518,7 @@ function onKey(e) {
   if (S.tab !== 'changes') return;
   const map = {
     j: () => step(1), arrowdown: () => step(1), k: () => step(-1), arrowup: () => step(-1),
-    a: () => decide('approved'), r: () => decide('rejected'), u: () => decide('pending'), e: startEdit,
+    a: () => decide('approved'), r: () => decide('rejected'), u: () => decide('pending'), e: startEdit, c: copyText,
     s: () => vt('same', () => { S.split = !S.split; renderSheet(); }), n: () => { const n = $('#note'); if (n && !n.disabled) { e.preventDefault(); n.focus(); } },
   };
   if (map[k]) { if (k !== 'n') e.preventDefault(); map[k](); }

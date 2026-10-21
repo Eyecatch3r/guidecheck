@@ -102,6 +102,8 @@ To decide a change:
    - Press `R` to reject the change.
 4. Optional: press `N` and write a note.
 
+To move a change into the Word file of the guide, press `C` or select **Copy text**. The interface copies the proposed text, or your edited text, as plain text without Markdown symbols. Paste it into Word.
+
 After a decision, the interface opens the next change that is not decided. Press `U` to undo a decision. Press `J` and `K` to move between changes. Press `S` to show the original and the proposal side by side.
 
 Write your name in the top bar before you start. The interface records it with each decision.
