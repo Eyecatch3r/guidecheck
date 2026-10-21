@@ -158,12 +158,13 @@ function decide(status, extra = {}) {
   S.fresh = status === 'pending' ? null : c.id;
   S.editing = false;
   persist();
+  let target = S.i;
   if (status === 'approved' || status === 'rejected' || status === 'edited') {
     const next = visible().find((x, k) => k > visibleIndex() && D(x.c.id).status === 'pending')
       || visible().find((x) => D(x.c.id).status === 'pending' && x.c.id !== c.id);
-    if (next) { S.i = next.i; }
+    if (next) target = next.i;
   }
-  render();
+  vt(target > S.i ? 'next' : target < S.i ? 'prev' : 'same', () => { S.i = target; render(); toTop(); });
 }
 
 // ---------- Selection and filters ----------
@@ -182,7 +183,33 @@ function step(d) {
   const next = v[Math.min(v.length - 1, Math.max(0, (k < 0 ? 0 : k + d)))];
   select(next.i);
 }
-function select(i) { S.i = i; S.editing = false; S.fresh = null; render(); $(`.changes [data-i="${i}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+function select(i) {
+  vt(i > S.i ? 'next' : i < S.i ? 'prev' : 'same', () => { S.i = i; S.editing = false; S.fresh = null; render(); toTop(); });
+  $(`.changes [data-i="${i}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+// ---------- Motion ----------
+// View transitions move the sheet in the direction of travel. No support or reduced motion: instant update.
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+function vt(kind, update) {
+  if (!document.startViewTransition || reduced.matches || !S.run) return update();
+  const root = document.documentElement;
+  root.dataset.vt = kind;
+  document.startViewTransition(update).finished.finally(() => { if (root.dataset.vt === kind) delete root.dataset.vt; });
+}
+// A new change starts at its top: the desk column scrolls on wide screens, the page on narrow ones.
+function toTop() {
+  const desk = $('.desk'), sheet = $('#sheet');
+  if (desk) desk.scrollTop = 0;
+  if (sheet && sheet.getBoundingClientRect().top < 0) sheet.scrollIntoView();
+}
+// The list cursor glides to the current change instead of jumping.
+function placeCursor() {
+  const ul = $('#changeList'), li = ul.querySelector('[aria-current="true"]')?.parentElement;
+  ul.style.setProperty('--cur-o', li ? 1 : 0);
+  if (li) for (const [k, v] of [['x', li.offsetLeft], ['y', li.offsetTop], ['w', li.offsetWidth], ['h', li.offsetHeight]]) ul.style.setProperty(`--cur-${k}`, v + 'px');
+  if (!ul.classList.contains('ready')) requestAnimationFrame(() => ul.classList.add('ready'));
+}
 
 // ---------- Load ----------
 async function init() {
@@ -269,7 +296,8 @@ function renderList() {
   }).join('') : '<li class="empty-list">No change matches these filters.</li>';
   // Narrow screens show the list as a horizontal strip: keep the current change in view.
   const ul = $('#changeList'), cur = ul.querySelector('[aria-current="true"]');
-  if (cur && ul.scrollWidth > ul.clientWidth) ul.scrollLeft = cur.parentElement.offsetLeft - 16;
+  if (cur && ul.scrollWidth > ul.clientWidth) ul.scrollTo({ left: cur.parentElement.offsetLeft - 16, behavior: reduced.matches ? 'auto' : 'smooth' });
+  placeCursor();
 }
 
 function renderSheet() {
@@ -428,9 +456,9 @@ function download(name, text, type) {
 function bind() {
   $('#runSelect').addEventListener('change', (e) => { location.hash = e.target.value; });
   window.addEventListener('hashchange', route);
-  window.addEventListener('resize', sizeNotice);
+  window.addEventListener('resize', () => { sizeNotice(); if (S.tab === 'changes' && S.run) placeCursor(); });
   $('#reviewer').addEventListener('change', (e) => { S.reviewer = e.target.value.trim(); try { localStorage.setItem('guidecheck:reviewer', S.reviewer); } catch { /* ignore */ } });
-  for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => { S.tab = b.dataset.tab; render(); });
+  for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => vt('tab', () => { S.tab = b.dataset.tab; render(); }));
   $('#filterStatus').addEventListener('change', (e) => { S.filter.status = e.target.value; render(); });
   $('#filterSig').addEventListener('change', (e) => { S.filter.sig = e.target.value; render(); });
   $('#changeList').addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (b) select(Number(b.dataset.i)); });
@@ -439,11 +467,11 @@ function bind() {
   $('#exportDecisions').addEventListener('click', () => download('decisions.json', JSON.stringify(payload(), null, 2) + '\n', 'application/json'));
   const sheet = $('#sheet');
   sheet.addEventListener('click', (e) => {
-    const sp = e.target.closest('[data-split]'); if (sp) { S.split = sp.dataset.split === '1'; return renderSheet(); }
+    const sp = e.target.closest('[data-split]'); if (sp) return vt('same', () => { S.split = sp.dataset.split === '1'; renderSheet(); });
     const act = e.target.closest('[data-act]')?.dataset.act; if (!act) return;
     ({
       approve: () => decide('approved'), reject: () => decide('rejected'), reset: () => decide('pending'),
-      edit: startEdit, saveEdit, cancelEdit: () => { S.editing = false; renderSheet(); },
+      edit: startEdit, saveEdit, cancelEdit,
       prev: () => step(-1), next: () => step(1),
     })[act]?.();
   });
@@ -458,7 +486,8 @@ function bind() {
   document.addEventListener('keydown', onKey);
 }
 
-function startEdit() { if (current()?.at >= 0) { S.editing = true; S.fresh = null; renderSheet(); } }
+function startEdit() { if (current()?.at >= 0) vt('same', () => { S.editing = true; S.fresh = null; renderSheet(); }); }
+function cancelEdit() { vt('same', () => { S.editing = false; renderSheet(); }); }
 function saveEdit() {
   const c = current(), text = $('#editText').value;
   if (text === c.proposed) decide('approved'); else decide('edited', { text });
@@ -466,19 +495,19 @@ function saveEdit() {
 
 function onKey(e) {
   if (e.target.id === 'editText') {
-    if (e.key === 'Escape') { S.editing = false; renderSheet(); }
+    if (e.key === 'Escape') cancelEdit();
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveEdit(); }
     return;
   }
   if (e.target.matches?.('input, select, textarea')) { if (e.key === 'Escape') e.target.blur(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey || !S.run) return;
   const k = e.key.toLowerCase();
-  if (k === '1' || k === '2' || k === '3') { S.tab = ['changes', 'assessment', 'full'][Number(k) - 1]; return render(); }
+  if (k === '1' || k === '2' || k === '3') return vt('tab', () => { S.tab = ['changes', 'assessment', 'full'][Number(k) - 1]; render(); });
   if (S.tab !== 'changes') return;
   const map = {
     j: () => step(1), arrowdown: () => step(1), k: () => step(-1), arrowup: () => step(-1),
     a: () => decide('approved'), r: () => decide('rejected'), u: () => decide('pending'), e: startEdit,
-    s: () => { S.split = !S.split; renderSheet(); }, n: () => { const n = $('#note'); if (n && !n.disabled) { e.preventDefault(); n.focus(); } },
+    s: () => vt('same', () => { S.split = !S.split; renderSheet(); }), n: () => { const n = $('#note'); if (n && !n.disabled) { e.preventDefault(); n.focus(); } },
   };
   if (map[k]) { if (k !== 'n') e.preventDefault(); map[k](); }
 }
