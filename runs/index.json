@@ -1,0 +1,15 @@
+{
+  "runs": [
+    {
+      "guide": "web-surveys-demo",
+      "runId": "2026-10-21-claude",
+      "guideTitle": "Web Surveys: A Practical Guide (demo)",
+      "createdAt": "2026-10-21",
+      "agent": "Claude Code (claude-opus-5-5)",
+      "verdict": "substantive",
+      "changes": 9,
+      "decided": 0,
+      "synthetic": true
+    }
+  ]
+}

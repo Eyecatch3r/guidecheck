@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guidecheck</title>
+  <meta name="description" content="Review AI-proposed, sourced updates to published guides, one change at a time.">
+  <link rel="preload" href="fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23132748'/%3E%3Cpath d='M9 21l5 4 9-15' fill='none' stroke='%23fbfbf9' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <script src="vendor/marked.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="bar">
+    <a class="wordmark" href="./">Guide<i>check</i></a>
+    <label class="run-pick"><span class="sr-only">Guide and run</span><select id="runSelect"></select></label>
+    <div class="bar-end">
+      <span class="progress" id="progress" aria-live="polite"></span>
+      <span class="save-state" id="saveState" aria-live="polite"></span>
+      <label class="reviewer"><span class="sr-only">Your name</span><input id="reviewer" placeholder="Your name" autocomplete="name"></label>
+      <details class="menu">
+        <summary>Export</summary>
+        <div class="menu-panel">
+          <button id="exportRevised">revised.md<small>The guide with approved and edited changes applied</small></button>
+          <button id="exportDecisions">decisions.json<small>Every decision, note, name, and time</small></button>
+          <p>Put both files in the run folder and commit them.</p>
+        </div>
+      </details>
+    </div>
+  </header>
+
+  <div class="strip">
+    <div class="strip-title" id="stripTitle"></div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" data-tab="changes">Changes <kbd>1</kbd></button>
+      <button role="tab" data-tab="assessment">Assessment <kbd>2</kbd></button>
+      <button role="tab" data-tab="full">Full text <kbd>3</kbd></button>
+    </nav>
+  </div>
+  <p class="notice" id="notice" hidden></p>
+
+  <main>
+    <div id="viewState" class="page"></div>
+
+    <div class="review" id="viewChanges" hidden>
+      <nav class="col list" aria-label="Changes">
+        <div class="filters">
+          <label>Status
+            <select id="filterStatus"><option value="all">All</option><option value="pending">To decide</option><option value="decided">Decided</option></select>
+          </label>
+          <label>Significance
+            <select id="filterSig"><option value="all">All</option><option value="major">Major</option><option value="significant">Significant</option><option value="relevant">Relevant</option><option value="incremental">Incremental</option></select>
+          </label>
+        </div>
+        <ol class="changes" id="changeList"></ol>
+      </nav>
+      <div class="col desk"><article class="sheet" id="sheet"></article></div>
+      <aside class="col side" id="sources" aria-label="Sources"></aside>
+    </div>
+
+    <div class="page" id="viewAssessment" hidden><article class="sheet assess" id="assessment"></article></div>
+    <div class="page" id="viewFull" hidden><article class="sheet" id="full"></article></div>
+  </main>
+</body>
+</html>

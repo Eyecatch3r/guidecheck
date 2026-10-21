@@ -1,0 +1,472 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-21T13:56:50+00:00",
+  "title": "Design System: Guidecheck",
+  "extensions": {
+    "colorMeta": {
+      "blueline": {
+        "role": "primary",
+        "displayName": "Blueline Blue",
+        "canonical": "oklch(48.7% 0.174 261)",
+        "tonalRamp": [
+          "#00062d",
+          "#062152",
+          "#1e3f7b",
+          "#375fa6",
+          "#5781cc",
+          "#7ea5ea",
+          "#a6caff",
+          "#d0f0ff"
+        ]
+      },
+      "blue-wash": {
+        "role": "primary",
+        "displayName": "Blue Wash",
+        "canonical": "oklch(94.1% 0.022 261)",
+        "tonalRamp": [
+          "#060b15",
+          "#1f2530",
+          "#3b424e",
+          "#5a626e",
+          "#7b8390",
+          "#9da6b4",
+          "#c1cad8",
+          "#e6effe"
+        ]
+      },
+      "red-pencil": {
+        "role": "secondary",
+        "displayName": "Red Pencil",
+        "canonical": "oklch(50.8% 0.186 29)",
+        "tonalRamp": [
+          "#240000",
+          "#490805",
+          "#71251d",
+          "#9b4136",
+          "#c16356",
+          "#e18a7d",
+          "#ffb2a5",
+          "#ffdbcf"
+        ]
+      },
+      "navy": {
+        "role": "tertiary",
+        "displayName": "Shell Navy",
+        "canonical": "oklch(27.5% 0.067 260)",
+        "tonalRamp": [
+          "#000826",
+          "#102445",
+          "#2c4265",
+          "#4b6287",
+          "#6b83ab",
+          "#8da6cf",
+          "#b0cbf5",
+          "#d5f0ff"
+        ]
+      },
+      "navy-2": {
+        "role": "tertiary",
+        "displayName": "Navy Raised",
+        "canonical": "oklch(34.4% 0.084 260)",
+        "tonalRamp": [
+          "#00062d",
+          "#09234d",
+          "#26416e",
+          "#446191",
+          "#6483b5",
+          "#86a6da",
+          "#a9cbff",
+          "#cef0ff"
+        ]
+      },
+      "navy-line": {
+        "role": "tertiary",
+        "displayName": "Navy Line",
+        "canonical": "oklch(41.2% 0.092 260)",
+        "tonalRamp": [
+          "#00062d",
+          "#062250",
+          "#234172",
+          "#426195",
+          "#6283b9",
+          "#83a6df",
+          "#a7cbff",
+          "#cff0ff"
+        ]
+      },
+      "navy-ink": {
+        "role": "tertiary",
+        "displayName": "Navy Ink",
+        "canonical": "oklch(94.8% 0.012 260)",
+        "tonalRamp": [
+          "#080b10",
+          "#22252b",
+          "#3e4249",
+          "#5d6168",
+          "#7e838a",
+          "#a1a5ad",
+          "#c5c9d1",
+          "#eaeff7"
+        ]
+      },
+      "navy-ink-2": {
+        "role": "tertiary",
+        "displayName": "Navy Ink Muted",
+        "canonical": "oklch(78.9% 0.033 260)",
+        "tonalRamp": [
+          "#040b19",
+          "#1c2535",
+          "#384254",
+          "#566274",
+          "#778397",
+          "#99a6ba",
+          "#bdcadf",
+          "#e2efff"
+        ]
+      },
+      "amber": {
+        "role": "tertiary",
+        "displayName": "Caution Amber",
+        "canonical": "oklch(48.3% 0.111 62)",
+        "tonalRamp": [
+          "#210000",
+          "#441400",
+          "#693000",
+          "#8d5006",
+          "#b27134",
+          "#d6955a",
+          "#f7bb88",
+          "#ffe3b6"
+        ]
+      },
+      "desk": {
+        "role": "neutral",
+        "displayName": "Desk",
+        "canonical": "oklch(91.0% 0.009 248)",
+        "tonalRamp": [
+          "#080c0f",
+          "#222529",
+          "#3e4246",
+          "#5d6266",
+          "#7e8387",
+          "#a1a6aa",
+          "#c5cacf",
+          "#eaeff4"
+        ]
+      },
+      "desk-deep": {
+        "role": "neutral",
+        "displayName": "Desk Deep",
+        "canonical": "oklch(87.3% 0.012 248)",
+        "tonalRamp": [
+          "#070c10",
+          "#20262b",
+          "#3d4348",
+          "#5c6268",
+          "#7d838a",
+          "#9fa6ad",
+          "#c3cad1",
+          "#e8eff7"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Galley Sheet",
+        "canonical": "oklch(98.8% 0.002 248)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606162",
+          "#818283",
+          "#a4a5a6",
+          "#c8c9ca",
+          "#edeeef"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(22.6% 0.013 264)",
+        "tonalRamp": [
+          "#090b11",
+          "#22252b",
+          "#3f4249",
+          "#5e6169",
+          "#7e828a",
+          "#a1a5ad",
+          "#c5c9d2",
+          "#eaeff7"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "oklch(40.5% 0.022 264)",
+        "tonalRamp": [
+          "#070b14",
+          "#202530",
+          "#3c424e",
+          "#5b616e",
+          "#7c8290",
+          "#9ea5b3",
+          "#c2c9d8",
+          "#e7effe"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "oklch(50.1% 0.021 261)",
+        "tonalRamp": [
+          "#070b14",
+          "#1f252f",
+          "#3c424d",
+          "#5b626e",
+          "#7b838f",
+          "#9ea5b3",
+          "#c2cad7",
+          "#e7effd"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "oklch(84.2% 0.014 252)",
+        "tonalRamp": [
+          "#070c11",
+          "#20262c",
+          "#3d4349",
+          "#5c6269",
+          "#7d838a",
+          "#9fa6ad",
+          "#c3cad2",
+          "#e8eff8"
+        ]
+      },
+      "rule-soft": {
+        "role": "neutral",
+        "displayName": "Rule Soft",
+        "canonical": "oklch(92.6% 0.007 248)",
+        "tonalRamp": [
+          "#090b0e",
+          "#222528",
+          "#3f4246",
+          "#5e6265",
+          "#7f8386",
+          "#a2a5a9",
+          "#c6cacd",
+          "#ebeff3"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Run verdict on the Assessment sheet."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Change title on the galley sheet."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Guide name in the run strip."
+      },
+      "galley": {
+        "displayName": "Galley",
+        "purpose": "Proof-marked guide text."
+      },
+      "body-serif": {
+        "displayName": "Body Serif",
+        "purpose": "Rationale, edit field, assessment lists, empty states."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All interface text, buttons, change list."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Section headings in the sheet and side column. Sentence case."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Change numbers, line numbers, source IDs, DOIs, keys."
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper",
+        "value": "0 1px 2px rgb(0 0 0 / .07), 0 6px 18px -6px rgb(0 0 0 / .16)",
+        "purpose": "The galley sheet and the export popover. Paper on the desk only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ring-draw",
+        "value": ".42s cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The decision ring draws itself on a new decision."
+      },
+      {
+        "name": "ink-fade",
+        "value": ".2s ease-out (ring), .25s ease-out (change list)",
+        "purpose": "The decision word fades in."
+      },
+      {
+        "name": "control-state",
+        "value": ".12s",
+        "purpose": "Background and border change on buttons."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none",
+        "purpose": "prefers-reduced-motion removes the ring and ink animations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "stacked-sources",
+        "value": "1180px"
+      },
+      {
+        "name": "single-column",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Approve and Save edit. Navy fill, key hint.",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg viewBox=\"0 0 16 16\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 8.5l3.2 3L13 4.5\"/></svg>Approve <kbd>A</kbd></button>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-btn{display:inline-flex;align-items:center;gap:8px;border-radius:4px;padding:8px 14px;font:500 14px/1.45 var(--sans);border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer;transition:background-color .12s,border-color .12s} .ds-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px} .ds-btn kbd{font:500 11px/1 var(--mono);padding:2px 5px;border-radius:3px;border:1px solid currentColor;opacity:.7} .ds-btn-primary{background:var(--navy);border-color:var(--navy);color:#fff} .ds-btn-primary:hover{background:var(--navy-2)}"
+    },
+    {
+      "name": "Reject Button",
+      "kind": "button",
+      "refersTo": "button-reject-hover",
+      "description": "Default button. It turns red pencil on hover.",
+      "html": "<button class=\"ds-btn ds-btn-reject\"><svg viewBox=\"0 0 16 16\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M4 4l8 8M12 4l-8 8\"/></svg>Reject <kbd>R</kbd></button>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-btn{display:inline-flex;align-items:center;gap:8px;border-radius:4px;padding:8px 14px;font:500 14px/1.45 var(--sans);border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer;transition:background-color .12s,border-color .12s} .ds-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px} .ds-btn kbd{font:500 11px/1 var(--mono);padding:2px 5px;border-radius:3px;border:1px solid currentColor;opacity:.7} .ds-btn:hover{border-color:var(--ink-3)} .ds-btn-reject:hover{border-color:var(--red);color:var(--red)}"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Undo, Cancel, previous and next.",
+      "html": "<button class=\"ds-btn ds-btn-quiet\">Cancel <kbd>Esc</kbd></button>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-btn{display:inline-flex;align-items:center;gap:8px;border-radius:4px;padding:8px 14px;font:500 14px/1.45 var(--sans);border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer;transition:background-color .12s,border-color .12s} .ds-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px} .ds-btn kbd{font:500 11px/1 var(--mono);padding:2px 5px;border-radius:3px;border:1px solid currentColor;opacity:.7} .ds-btn-quiet{border-color:transparent;background:none;color:var(--ink-3);padding-inline:8px} .ds-btn-quiet:hover{border-color:var(--ink-3)}"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "refersTo": "tabs",
+      "description": "View tabs in the run strip, with number keys.",
+      "html": "<nav class=\"ds-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"true\">Changes <kbd>1</kbd></button><button role=\"tab\" aria-selected=\"false\">Assessment <kbd>2</kbd></button><button role=\"tab\" aria-selected=\"false\">Full text <kbd>3</kbd></button></nav>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-tabs{display:flex;gap:2px;height:50px;background:var(--desk);border-bottom:1px solid var(--rule);padding:0 12px} .ds-tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:0 14px;font:500 14px var(--sans);color:var(--ink-2);display:flex;align-items:center;gap:8px;cursor:pointer} .ds-tabs button:hover{color:var(--ink)} .ds-tabs button:focus-visible{outline:2px solid var(--blue);outline-offset:2px} .ds-tabs button[aria-selected=true]{color:var(--navy);border-bottom-color:var(--navy);font-weight:600} .ds-tabs kbd{font:500 11px/1 var(--mono);padding:2px 5px;border-radius:3px;border:1px solid currentColor;opacity:.7}"
+    },
+    {
+      "name": "Edit Field",
+      "kind": "input",
+      "refersTo": "edit-field",
+      "description": "The reviewer's own wording, in red pencil.",
+      "html": "<label class=\"ds-edit\"><span>Your wording</span><textarea>Run at least two pretest rounds.</textarea></label>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-edit{display:grid;gap:8px} .ds-edit span{font:600 12.5px var(--sans);color:var(--red)} .ds-edit textarea{min-height:110px;font:400 16px/1.6 var(--serif);padding:12px 14px;border:1.5px solid var(--red);border-radius:4px;background:#fff;color:var(--ink);caret-color:var(--red);resize:vertical} .ds-edit textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}"
+    },
+    {
+      "name": "Change Row",
+      "kind": "custom",
+      "refersTo": "change-row-current",
+      "description": "Change list row: number, significance dot, title, decision mark.",
+      "html": "<button class=\"ds-row\" aria-current=\"true\"><span class=\"no\">C-03</span><span class=\"dot\"></span><span class=\"t\">Pretest rounds</span><span class=\"mark\">OK</span><span class=\"sec\">3.2 Questionnaire testing</span></button>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-row{width:280px;text-align:left;background:none;border:0;border-top:1px solid transparent;border-bottom:1px solid transparent;padding:9px 10px;display:grid;grid-template-columns:34px 14px minmax(0,1fr) auto;column-gap:8px;align-items:baseline;font:400 14px/1.45 var(--sans);color:var(--ink);cursor:pointer} .ds-row:hover{background:rgb(255 255 255 / .45)} .ds-row:focus-visible{outline:2px solid var(--blue);outline-offset:2px} .ds-row[aria-current=true]{background:var(--sheet);border-color:var(--rule)} .ds-row .no{font:500 12px var(--mono);color:var(--ink-3)} .ds-row .dot{width:11px;height:11px;border-radius:50%;background:var(--ink);align-self:center;justify-self:center} .ds-row .t{font-weight:500;line-height:1.3} .ds-row .mark{font:italic 600 13px/1 var(--serif);color:var(--red)} .ds-row .sec{grid-column:3/5;font-size:12px;color:var(--ink-3);margin-top:2px}"
+    },
+    {
+      "name": "Proof-marked Galley",
+      "kind": "card",
+      "refersTo": "galley-sheet",
+      "description": "The sheet with blue proof marks and the red decision ring in the margin.",
+      "html": "<div class=\"ds-sheet\"><div class=\"ds-margin\"><span class=\"ds-ln\">ll. 41&#8211;43</span><span class=\"ds-ring\"><svg viewBox=\"0 0 84 38\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" d=\"M10 22C6 10 30 4 50 5s30 8 26 20-38 12-58 7C6 30 4 18 16 11\"/></svg><span>OK</span></span></div><p class=\"ds-galley\">Run <span class=\"ds-del\">one pretest</span> <span class=\"ds-ins\">at least two pretest rounds</span> before fielding.</p></div>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-sheet{position:relative;background:var(--sheet);box-shadow:var(--paper-shadow);border-radius:2px;padding:24px 32px 24px 96px;max-width:620px} .ds-margin{position:absolute;left:20px;top:28px;display:grid;gap:8px;justify-items:start} .ds-ln{font:11.5px var(--mono);color:var(--ink-3)} .ds-ring{position:relative;display:inline-grid;place-items:center;width:62px;height:30px;margin-left:-6px;color:var(--red);font:italic 600 16px/1 var(--serif)} .ds-ring svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible} .ds-ring path{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;vector-effect:non-scaling-stroke} .ds-galley{margin:0;font:400 18px/1.68 var(--serif);color:var(--ink);padding:16px 0;border-top:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft)} .ds-del{text-decoration:line-through;text-decoration-color:var(--blue);text-decoration-thickness:2px;color:var(--ink-3)} .ds-ins{color:var(--blue)}"
+    },
+    {
+      "name": "Unverified Source Warning",
+      "kind": "custom",
+      "refersTo": "verify-no",
+      "description": "Amber warning between two hairlines.",
+      "html": "<p class=\"ds-verify\"><svg viewBox=\"0 0 16 16\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 2l6.5 11.5h-13z\"/><path d=\"M8 6.5v3M8 11.6v.1\"/></svg><span><b>Not verified.</b> The agent could not open this source. Check it before you approve.</span></p>",
+      "css": ":host{--desk:#dde2e7;--sheet:#fafbfc;--ink:#191c22;--ink-2:#434955;--ink-3:#5d6470;--rule:#c5ccd4;--rule-soft:#e3e7eb;--navy:#132748;--navy-2:#1d3864;--blue:#1d58c0;--blue-wash:#e3ecfb;--red:#b8231a;--amber:#8a4d00;--serif:'Source Serif 4',Charter,'Iowan Old Style',Georgia,serif;--sans:'Libre Franklin','Segoe UI',system-ui,sans-serif;--mono:ui-monospace,'Cascadia Mono','SF Mono',Menlo,Consolas,monospace;--paper-shadow:0 1px 2px rgb(0 0 0 / .07),0 6px 18px -6px rgb(0 0 0 / .16)} .ds-verify{display:flex;gap:6px;align-items:flex-start;margin:0;max-width:320px;padding:6px 0;font:400 12.5px/1.45 var(--sans);color:var(--amber);border-top:1px solid currentColor;border-bottom:1px solid currentColor} .ds-verify svg{flex:none;margin-top:1px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Galley Proof",
+    "overview": "Each proposed change is a proof on a sheet. The agent marks the sheet in blueline blue. The reviewer answers in red pencil. A deletion is a struck line. An insertion is new text in the agent's ink, with a caret mark. The reviewer's decision is a hand-drawn ring in the margin with one word: \"OK\", \"stet\", or \"amended\". The interface does not use the red and green line diff of code review.\n\nThe world is a cool galley-white sheet on a blue-grey desk, under a deep navy shell bar. Guide text uses a serif at reading size. Interface labels use a sans. Numbers, line numbers, and identifiers use monospace. Hairline rules divide content. Slug lines carry metadata. The density is that of a working desk: three columns on wide screens, one change in front of the reviewer at a time.\n\nThe build diverges from the direction contract in two small points. The sheet has a 2px corner and the export popover has a 6px corner. The side columns are 290px and 360px, not 280px and 340px. The build is the record.",
+    "keyCharacteristics": [
+      "Two inks with fixed jobs: blue for the agent, red for the reviewer.",
+      "One paper sheet on a desk. No cards.",
+      "Hairline rules and slug lines carry structure and metadata.",
+      "Serif for guide text, sans for interface, monospace for numbers.",
+      "Keyboard keys are visible on every decision control."
+    ],
+    "rules": [
+      {
+        "name": "The Two Inks Rule",
+        "body": "Blue belongs to the agent. Red belongs to the reviewer. Do not swap them. Do not use either ink for any other job.",
+        "section": "colors"
+      },
+      {
+        "name": "The Red Is Not Error Rule",
+        "body": "Red means a reviewer decision. Warnings and failures use Caution Amber, set between two hairline rules.",
+        "section": "colors"
+      },
+      {
+        "name": "The Print and Desk Rule",
+        "body": "Text from the guide or the agent's argument is serif. Text that operates the tool is sans. Do not set guide text in sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Numbers Are Mono Rule",
+        "body": "Change numbers, line ranges, counts in position, and source identifiers are monospace.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paper Only Rule",
+        "body": "A shadow means \"a sheet of paper on the desk\". Do not put shadows on buttons, rows, or columns.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set every agent mark in Blueline Blue and every reviewer mark in Red Pencil.",
+      "Do show a proposed deletion as struck text and an insertion as new text with a caret, on the sheet.",
+      "Do put the decision word in a hand-drawn ring in the left margin.",
+      "Do mark warnings in Caution Amber between a top and a bottom hairline.",
+      "Do show the keyboard key on each decision control and each tab.",
+      "Do set guide text in Source Serif 4 at 18px/1.68, max 70ch.",
+      "Do use the Paper shadow only on the sheet and on popovers."
+    ],
+    "donts": [
+      "Don't use a red and green line diff.",
+      "Don't use red for errors or warnings. Red is the reviewer's decision.",
+      "Don't wrap content in bordered or shadowed cards on the sheet. Use hairline rules.",
+      "Don't use corners larger than 6px.",
+      "Don't set change numbers, line numbers, or DOIs in a proportional face."
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Guidecheck run",
+  "description": "Result of one update assessment of one guide. Written by the agent, read by the review interface.",
+  "type": "object",
+  "required": ["schemaVersion", "guide", "runId", "createdAt", "agent", "verdict", "revisionLevel", "summary", "changes", "sources"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "guide": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "Folder name in guides/." },
+    "runId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$", "description": "Folder name in runs/<guide>/. Use YYYY-MM-DD-<agent>." },
+    "createdAt": { "type": "string", "format": "date" },
+    "agent": { "type": "string", "description": "Tool and model, for example 'Claude Code (claude-opus-5-5)'." },
+    "prompt": { "type": "string", "description": "Path of the prompt file that the agent used." },
+    "synthetic": { "type": "boolean", "description": "True only for demo data." },
+    "verdict": { "enum": ["current", "minor", "substantive", "structural", "superseded"] },
+    "revisionLevel": { "enum": ["reference", "substantive", "structural", "conceptual"] },
+    "summary": { "type": "string", "description": "Two to four sentences." },
+    "timeliness": {
+      "type": "array",
+      "description": "Part 3, dimensions A to H.",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "rating", "note"],
+        "properties": {
+          "dimension": { "type": "string" },
+          "rating": { "enum": ["current", "partly", "outdated", "n/a"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "developments": {
+      "type": "array",
+      "description": "Part 8, ranked by importance.",
+      "items": {
+        "type": "object",
+        "required": ["title", "significance"],
+        "properties": {
+          "title": { "type": "string" },
+          "significance": { "$ref": "#/$defs/significance" },
+          "sources": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "retain": { "type": "array", "items": { "type": "string" }, "description": "Parts that do not need to change." },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "section", "title", "significance", "direction", "priority", "original", "proposed", "rationale", "sources"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^c[0-9]+$" },
+          "section": { "type": "string", "description": "Heading of the section in the guide." },
+          "title": { "type": "string", "description": "Short label, maximum 60 characters." },
+          "kind": { "enum": ["revise", "add", "remove", "reference"] },
+          "significance": { "$ref": "#/$defs/significance" },
+          "direction": { "enum": ["confirms", "extends", "qualifies", "contradicts", "supersedes"] },
+          "priority": { "enum": ["essential", "important", "optional"] },
+          "original": { "type": "string", "minLength": 1, "description": "Exact passage from original.md. Must occur exactly one time." },
+          "proposed": { "type": "string", "description": "Replacement text. Empty string removes the passage." },
+          "rationale": { "type": "string" },
+          "sources": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "citation", "type", "verified"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^s[0-9]+$" },
+          "citation": { "type": "string", "description": "Full citation, APA 7." },
+          "year": { "type": "integer" },
+          "venue": { "type": "string" },
+          "doi": { "type": "string", "description": "DOI without the https://doi.org/ prefix." },
+          "url": { "type": "string" },
+          "type": { "enum": ["peer-reviewed", "preprint", "book", "report", "standard", "regulation", "editorial", "other"] },
+          "verified": { "type": "boolean" },
+          "verificationNote": { "type": "string" },
+          "finding": { "type": "string" },
+          "relevance": { "type": "string" }
+        }
+      }
+    },
+    "search": {
+      "type": "object",
+      "description": "Part 7.",
+      "properties": {
+        "databases": { "type": "array", "items": { "type": "string" } },
+        "terms": { "type": "array", "items": { "type": "string" } },
+        "dateRange": { "type": "string" },
+        "inclusion": { "type": "string" },
+        "exclusion": { "type": "string" },
+        "limitations": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "significance": { "enum": ["major", "significant", "relevant", "incremental"] }
+  }
+}
