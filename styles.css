@@ -194,6 +194,11 @@ kbd { font: 500 11px/1 var(--mono); padding: 2px 5px; border-radius: 3px; border
 .src-meta { display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--ink-3); flex-wrap: wrap; }
 .src-meta .id { font: 600 12px var(--mono); color: var(--ink); }
 .src-type { font-weight: 600; color: var(--ink-2); }
+.ref { all: unset; cursor: pointer; color: var(--blue); text-decoration: underline 1px; text-underline-offset: 3px; border-radius: 2px; transition: background-color .15s, color .15s; }
+.ref:hover { background: var(--blue-wash); }
+.ref:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.src.flash { animation: flash 1.4s var(--ease-out); }
+@keyframes flash { from { background: var(--blue-wash); box-shadow: -8px 0 0 var(--blue-wash), 8px 0 0 var(--blue-wash); } }
 .cite { margin: 6px 0 8px; font: 400 14.5px/1.45 var(--serif); }
 .verify { display: flex; gap: 6px; align-items: flex-start; font-size: 12.5px; margin: 0 0 8px; }
 .verify svg { width: 14px; height: 14px; flex: none; margin-top: 1px; }

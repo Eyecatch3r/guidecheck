@@ -196,7 +196,21 @@ function vt(kind, update) {
   if (!document.startViewTransition || reduced.matches || !S.run) return update();
   const root = document.documentElement;
   root.dataset.vt = kind;
-  document.startViewTransition(update).finished.finally(() => { if (root.dataset.vt === kind) delete root.dataset.vt; });
+  const t = document.startViewTransition(update);
+  t.finished.finally(() => { if (root.dataset.vt === kind) delete root.dataset.vt; });
+  return t.updateCallbackDone;
+}
+// s3 and c7 in agent prose become buttons that open that source or change. Unknown IDs stay plain text.
+const refs = (t) => esc(t).replace(/\b([sc])(\d+)\b/g, (m, k) =>
+  (k === 's' ? S.run.sources : S.run.changes).some((x) => x.id === m)
+    ? `<button type="button" class="ref" data-ref="${m}" title="${k === 's' ? 'Show source' : 'Open change'} ${m}">${m}</button>` : m);
+async function follow(id) {
+  if (id[0] === 'c') { S.tab = 'changes'; return select(S.run.changes.findIndex((c) => c.id === id)); }
+  // The sources column lists only the sources of the current change. Other sources are in the Assessment tab.
+  if (!$(`#src-${id}`)) await vt('tab', () => { S.tab = 'assessment'; render(); });
+  const el = $(`#src-${id}`);
+  el.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'center' });
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
 }
 // A new change starts at its top: the desk column scrolls on wide screens, the page on narrow ones.
 function toTop() {
@@ -343,7 +357,7 @@ function renderSheet() {
       <textarea id="editText" spellcheck="true">${esc(after)}</textarea>
       <div class="row"><button class="btn primary" data-act="saveEdit">${ICON.check}Save edit <kbd>Ctrl+Enter</kbd></button><button class="btn quiet" data-act="cancelEdit">Cancel <kbd>Esc</kbd></button></div>
     </div>` : ''}
-    <section class="why"><h2>Why the agent proposes this</h2><p>${esc(c.rationale)}</p></section>
+    <section class="why"><h2>Why the agent proposes this</h2><p>${refs(c.rationale)}</p></section>
     ${S.editing ? '' : `<div class="decide">
       <div class="row">
         <button class="btn primary" data-act="approve" ${c.at < 0 ? 'disabled' : ''}>${ICON.check}Approve <kbd>A</kbd></button>
@@ -394,7 +408,7 @@ function renderSources() {
 
 function renderAssessment() {
   const r = S.run, [v, vNote] = VERDICT[r.verdict] || [r.verdict, ''];
-  const src = (ids) => (ids || []).length ? `<span class="src-ref">${ids.map(esc).join(', ')}</span>` : '<span></span>';
+  const src = (ids) => (ids || []).length ? `<span class="src-ref">${refs(ids.join(', '))}</span>` : '<span></span>';
   const counts = ['major', 'significant', 'relevant', 'incremental'].map((s) => [s, r.changes.filter((c) => c.significance === s).length]).filter(([, n]) => n);
   $('#assessment').innerHTML = `
     <div class="verdict"><strong>${esc(v)}</strong><small>${esc(vNote)}</small>
@@ -464,6 +478,7 @@ function bind() {
   $('#filterStatus').addEventListener('change', (e) => { S.filter.status = e.target.value; render(); });
   $('#filterSig').addEventListener('change', (e) => { S.filter.sig = e.target.value; render(); });
   $('#changeList').addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (b) select(Number(b.dataset.i)); });
+  document.addEventListener('click', (e) => { const r = e.target.closest('[data-ref]'); if (r) follow(r.dataset.ref); });
   $('#full').addEventListener('click', (e) => { const f = e.target.closest('[data-goto]'); if (f) { S.tab = 'changes'; select(Number(f.dataset.goto)); } });
   $('#exportRevised').addEventListener('click', () => download('revised.md', revised(), 'text/markdown'));
   $('#exportDecisions').addEventListener('click', () => download('decisions.json', JSON.stringify(payload(), null, 2) + '\n', 'application/json'));
