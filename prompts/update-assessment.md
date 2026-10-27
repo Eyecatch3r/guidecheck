@@ -197,11 +197,15 @@ Write the result as files in the run folder. The review interface reads only the
 
 1. `report.md` — the full assessment, parts 1 to 8, in Markdown.
 2. `run.json` — the structured result. It must agree with `schema/run.schema.json`.
-3. In `run.json`, write each recommended text change as one item in `changes`:
-   - `original` is an exact copy of a passage in `original.md`. The passage must occur exactly one time.
-   - `proposed` is the full replacement text for that passage, in the same Markdown style.
-   - To add new text, use the paragraph before the new text as `original`. Write that paragraph plus the new text as `proposed`.
-   - To remove text, write an empty `proposed`.
-   - Keep each change to one claim or one paragraph. Do not let two changes overlap.
-   - Give every change of significance `major`, `significant`, or `relevant` at least one source.
+3. In `run.json`, set `schemaVersion` to 2. Write each finding as one item in `changes`. An item is one of two types:
+   - `"type": "comment"` for every finding about content: a claim that is outdated, incomplete, contradicted, or needs a new reference. A comment works like a comment in Word. It does not change the text of the guide.
+     - `original` is the anchor: an exact copy of the shortest passage in `original.md` that the comment refers to (a sentence, a list item, or a reference entry). The passage must occur exactly one time.
+     - `comment` is the text of the comment: what the guide says, what later evidence shows, and what the editor should check or change. Refer to sources by ID (`s1`, `s2`).
+     - `suggestion` is optional: replacement wording for the anchor, in the voice and Markdown style of the guide. The editor can copy it into Word. Leave it out if the editor must decide the wording.
+     - Give every comment `significance`, `direction`, `priority`, and `sources`. Give every comment of significance `major`, `significant`, or `relevant` at least one source.
+   - `"type": "correction"` only for errors of form that need no editorial judgment: a typing error, a spelling, grammar, or punctuation error, or a broken internal cross-reference. A correction changes the text.
+     - `original` is the exact wrong text, with enough words around it to occur exactly one time. `proposed` is the corrected text.
+     - Only correct errors that are in the published guide. Do not report errors that the PDF conversion made.
+     - If the fix changes the meaning of a sentence, it is a comment, not a correction.
+   - Do not let two items overlap.
 4. In `run.json`, set `verified: true` on a source only if you opened the source or its registry entry (for example, doi.org or Crossref) in this run. Otherwise set `verified: false` and say what you could not check in `verificationNote`.

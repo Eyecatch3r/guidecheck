@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "guide": "web-surveys-demo",
   "runId": "2026-10-21-claude",
   "createdAt": "2026-10-21",
@@ -10,23 +10,100 @@
   "revisionLevel": "substantive",
   "summary": "The core advice on sampling, question wording, and consent remains sound. Three sections rest on assumptions that later research and regulation overturned: smartphone use is no longer rare, attention checks no longer protect online samples, and the cited data protection law no longer applies. These need substantive updating, not a new structure.",
   "timeliness": [
-    { "dimension": "A. Core arguments", "rating": "partly", "note": "The coverage and sampling argument holds. The device argument (design for large screens) is contradicted by later evidence." },
-    { "dimension": "B. Empirical evidence", "rating": "outdated", "note": "The guide gives no evidence for its device and data-quality claims. Later studies with large samples contradict both." },
-    { "dimension": "C. Theoretical framework", "rating": "current", "note": "The implicit total survey error view is still the standard frame and is now applied to mobile web surveys." },
-    { "dimension": "D. Terminology and concepts", "rating": "partly", "note": "'Mobile-first design', 'bogus respondents', and 'synthetic respondents' are now established concepts that the guide does not have." },
-    { "dimension": "E. Methodology", "rating": "partly", "note": "Grid and slider advice is qualified by experiments that compare formats across devices." },
-    { "dimension": "F. Research consensus", "rating": "outdated", "note": "Consensus moved from 'block or redirect smartphone users' to 'design for every device'." },
-    { "dimension": "G. Unresolved questions", "rating": "partly", "note": "Detection of AI-generated responses is a new open problem that did not exist in 2014." },
-    { "dimension": "H. Practical or policy relevance", "rating": "outdated", "note": "GDPR replaced Directive 95/46/EC in 2018. WCAG 2.2 replaced 2.0 as the current accessibility standard." }
+    {
+      "dimension": "A. Core arguments",
+      "rating": "partly",
+      "note": "The coverage and sampling argument holds. The device argument (design for large screens) is contradicted by later evidence."
+    },
+    {
+      "dimension": "B. Empirical evidence",
+      "rating": "outdated",
+      "note": "The guide gives no evidence for its device and data-quality claims. Later studies with large samples contradict both."
+    },
+    {
+      "dimension": "C. Theoretical framework",
+      "rating": "current",
+      "note": "The implicit total survey error view is still the standard frame and is now applied to mobile web surveys."
+    },
+    {
+      "dimension": "D. Terminology and concepts",
+      "rating": "partly",
+      "note": "'Mobile-first design', 'bogus respondents', and 'synthetic respondents' are now established concepts that the guide does not have."
+    },
+    {
+      "dimension": "E. Methodology",
+      "rating": "partly",
+      "note": "Grid and slider advice is qualified by experiments that compare formats across devices."
+    },
+    {
+      "dimension": "F. Research consensus",
+      "rating": "outdated",
+      "note": "Consensus moved from 'block or redirect smartphone users' to 'design for every device'."
+    },
+    {
+      "dimension": "G. Unresolved questions",
+      "rating": "partly",
+      "note": "Detection of AI-generated responses is a new open problem that did not exist in 2014."
+    },
+    {
+      "dimension": "H. Practical or policy relevance",
+      "rating": "outdated",
+      "note": "GDPR replaced Directive 95/46/EC in 2018. WCAG 2.2 replaced 2.0 as the current accessibility standard."
+    }
   ],
   "developments": [
-    { "title": "Smartphone completion became common and stays socially patterned", "significance": "major", "sources": ["s1", "s2"] },
-    { "title": "Bogus and insincere respondents in opt-in samples escape common checks", "significance": "significant", "sources": ["s8", "s9"] },
-    { "title": "LLM-based agents pass standard attention checks", "significance": "significant", "sources": ["s10"] },
-    { "title": "GDPR replaced the Data Protection Directive", "significance": "significant", "sources": ["s11"] },
-    { "title": "Grid formats reduce data quality compared with item-by-item formats", "significance": "significant", "sources": ["s5"] },
-    { "title": "Response quality on smartphones is comparable to computers", "significance": "relevant", "sources": ["s3", "s4"] },
-    { "title": "AAPOR Standard Definitions, 10th edition, organize rates by sampling frame", "significance": "relevant", "sources": ["s7"] }
+    {
+      "title": "Smartphone completion became common and stays socially patterned",
+      "significance": "major",
+      "sources": [
+        "s1",
+        "s2"
+      ]
+    },
+    {
+      "title": "Bogus and insincere respondents in opt-in samples escape common checks",
+      "significance": "significant",
+      "sources": [
+        "s8",
+        "s9"
+      ]
+    },
+    {
+      "title": "LLM-based agents pass standard attention checks",
+      "significance": "significant",
+      "sources": [
+        "s10"
+      ]
+    },
+    {
+      "title": "GDPR replaced the Data Protection Directive",
+      "significance": "significant",
+      "sources": [
+        "s11"
+      ]
+    },
+    {
+      "title": "Grid formats reduce data quality compared with item-by-item formats",
+      "significance": "significant",
+      "sources": [
+        "s5"
+      ]
+    },
+    {
+      "title": "Response quality on smartphones is comparable to computers",
+      "significance": "relevant",
+      "sources": [
+        "s3",
+        "s4"
+      ]
+    },
+    {
+      "title": "AAPOR Standard Definitions, 10th edition, organize rates by sampling frame",
+      "significance": "relevant",
+      "sources": [
+        "s7"
+      ]
+    }
   ],
   "retain": [
     "Section 2: the warning against population inference from web-only and opt-in samples.",
@@ -37,6 +114,7 @@
   "changes": [
     {
       "id": "c1",
+      "type": "comment",
       "section": "3 Devices",
       "title": "Smartphone completion is common, not rare",
       "kind": "revise",
@@ -44,12 +122,18 @@
       "direction": "contradicts",
       "priority": "essential",
       "original": "Almost all respondents complete web surveys on a desktop or laptop computer. Completion on smartphones is rare, usually below 5 percent of cases. Researchers can therefore design the questionnaire for a large screen and ask smartphone users to switch to a computer.",
-      "proposed": "A large and growing share of respondents completes web surveys on a smartphone, also when the survey was designed for a computer (Gummer et al., 2019). Who uses a smartphone remains socially patterned, so blocking smartphones or asking respondents to switch devices can increase nonresponse and change the composition of the sample (Couper et al., 2017). Design the questionnaire for small screens first and make sure that it also works on large screens. Response quality on smartphones is generally comparable to computers (Antoun et al., 2017). Differences between devices partly reflect who chooses which device (Lugtig & Toepoel, 2016).",
-      "rationale": "The original claim was an empirical estimate that is no longer true. Gummer et al. pooled 18 German web surveys (2012–2016) and show a sharp rise in smartphone completion with stable selectivity. The recommendation to redirect smartphone users follows from the outdated estimate and now risks nonresponse bias. Two experiments show that smartphone answers are not worse in quality, which removes the main reason to redirect.",
-      "sources": ["s1", "s2", "s3", "s4"]
+      "comment": "The original claim was an empirical estimate that is no longer true. Gummer et al. pooled 18 German web surveys (2012–2016) and show a sharp rise in smartphone completion with stable selectivity. The recommendation to redirect smartphone users follows from the outdated estimate and now risks nonresponse bias. Two experiments show that smartphone answers are not worse in quality, which removes the main reason to redirect.",
+      "suggestion": "A large and growing share of respondents completes web surveys on a smartphone, also when the survey was designed for a computer (Gummer et al., 2019). Who uses a smartphone remains socially patterned, so blocking smartphones or asking respondents to switch devices can increase nonresponse and change the composition of the sample (Couper et al., 2017). Design the questionnaire for small screens first and make sure that it also works on large screens. Response quality on smartphones is generally comparable to computers (Antoun et al., 2017). Differences between devices partly reflect who chooses which device (Lugtig & Toepoel, 2016).",
+      "sources": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ]
     },
     {
       "id": "c2",
+      "type": "comment",
       "section": "3 Devices",
       "title": "Test on all device types, not only browsers",
       "kind": "revise",
@@ -57,12 +141,15 @@
       "direction": "extends",
       "priority": "important",
       "original": "Test the questionnaire in the two or three most common web browsers before fieldwork.",
-      "proposed": "Before fieldwork, test the questionnaire on smartphones, tablets, and computers, in the most common web browsers on each device type.",
-      "rationale": "Follows from c1. Display problems on small screens are a measurement error source in mobile web surveys (Couper et al., 2017). Browser tests on a computer do not find them.",
-      "sources": ["s2"]
+      "comment": "Follows from c1. Display problems on small screens are a measurement error source in mobile web surveys (Couper et al., 2017). Browser tests on a computer do not find them.",
+      "suggestion": "Before fieldwork, test the questionnaire on smartphones, tablets, and computers, in the most common web browsers on each device type.",
+      "sources": [
+        "s2"
+      ]
     },
     {
       "id": "c3",
+      "type": "comment",
       "section": "4.2 Layout",
       "title": "Grids reduce data quality",
       "kind": "revise",
@@ -70,12 +157,16 @@
       "direction": "qualifies",
       "priority": "important",
       "original": "Grid (matrix) questions save space and reduce the time respondents need. Use grids for batteries of items that share the same response scale.",
-      "proposed": "Grid (matrix) questions save space on large screens, but they cause more straightlining, lower data quality, and worse respondent evaluations than item-by-item formats, on computers and on smartphones (Mavletova et al., 2018). Prefer an item-by-item format for batteries of items, especially when many respondents use smartphones (Revilla & Couper, 2018).",
-      "rationale": "A two-wave experiment that crossed format and device found grid penalties on both devices. The original advice is not wrong about space, but it omits the quality cost. The second citation is not verified: check that Revilla & Couper support the smartphone part before you approve, or remove that sentence with Edit.",
-      "sources": ["s5", "s6"]
+      "comment": "A two-wave experiment that crossed format and device found grid penalties on both devices. The original advice is not wrong about space, but it omits the quality cost. The second citation is not verified: check that Revilla & Couper support the smartphone part before you approve, or remove that sentence with Edit.",
+      "suggestion": "Grid (matrix) questions save space on large screens, but they cause more straightlining, lower data quality, and worse respondent evaluations than item-by-item formats, on computers and on smartphones (Mavletova et al., 2018). Prefer an item-by-item format for batteries of items, especially when many respondents use smartphones (Revilla & Couper, 2018).",
+      "sources": [
+        "s5",
+        "s6"
+      ]
     },
     {
       "id": "c4",
+      "type": "comment",
       "section": "4.2 Layout",
       "title": "Sliders are imprecise on touch screens",
       "kind": "revise",
@@ -83,12 +174,15 @@
       "direction": "qualifies",
       "priority": "optional",
       "original": "Sliders and visual analogue scales are a modern alternative to radio buttons and can increase respondent engagement.",
-      "proposed": "Sliders and visual analogue scales are an alternative to radio buttons, but respondents on smartphones enter values less accurately with small sliders (Antoun et al., 2017). Use radio buttons unless the research question needs a continuous scale.",
-      "rationale": "In the crossover experiment, the main problem of smartphone answers was inaccurate entry with small sliders and date pickers. The claim about engagement has no source in the original guide.",
-      "sources": ["s3"]
+      "comment": "In the crossover experiment, the main problem of smartphone answers was inaccurate entry with small sliders and date pickers. The claim about engagement has no source in the original guide.",
+      "suggestion": "Sliders and visual analogue scales are an alternative to radio buttons, but respondents on smartphones enter values less accurately with small sliders (Antoun et al., 2017). Use radio buttons unless the research question needs a continuous scale.",
+      "sources": [
+        "s3"
+      ]
     },
     {
       "id": "c5",
+      "type": "comment",
       "section": "5 Response rates and reporting",
       "title": "Cite AAPOR Standard Definitions, 10th edition",
       "kind": "reference",
@@ -96,12 +190,15 @@
       "direction": "supersedes",
       "priority": "important",
       "original": "Calculate response rates according to the AAPOR Standard Definitions (7th edition, 2011).",
-      "proposed": "Calculate response rates according to the current AAPOR Standard Definitions (10th edition, 2023). This edition organizes outcome rates by sampling frame, including online panels.",
-      "rationale": "The 7th edition is three editions old. The 10th edition adds rules for online panels, which are the frame of many web surveys.",
-      "sources": ["s7"]
+      "comment": "The 7th edition is three editions old. The 10th edition adds rules for online panels, which are the frame of many web surveys.",
+      "suggestion": "Calculate response rates according to the current AAPOR Standard Definitions (10th edition, 2023). This edition organizes outcome rates by sampling frame, including online panels.",
+      "sources": [
+        "s7"
+      ]
     },
     {
       "id": "c6",
+      "type": "comment",
       "section": "6 Data quality",
       "title": "Attention checks alone no longer protect data quality",
       "kind": "revise",
@@ -109,12 +206,17 @@
       "direction": "contradicts",
       "priority": "essential",
       "original": "Respondents who fail these items can be excluded. These checks are sufficient to protect data quality in online panels.",
-      "proposed": "Respondents who fail these items can be excluded, but these checks alone do not protect data quality. In opt-in online samples, a part of the respondents gives bogus or insincere answers, and common checks miss most of them (Kennedy et al., 2021). Autonomous agents based on large language models pass standard attention checks almost every time (Westwood, 2025). Combine several indicators (for example, open-ended answers, response times, and consistency checks), prefer probability-based panels for estimates, and report how you screened cases.",
-      "rationale": "The word 'sufficient' is contradicted by two lines of evidence: the Pew studies with six online samples (bogus respondents at about 4–7 percent of opt-in samples, missed by common checks) and an experiment in which an LLM agent passed 99.8 percent of 6,000 attention-check trials.",
-      "sources": ["s8", "s9", "s10"]
+      "comment": "The word 'sufficient' is contradicted by two lines of evidence: the Pew studies with six online samples (bogus respondents at about 4–7 percent of opt-in samples, missed by common checks) and an experiment in which an LLM agent passed 99.8 percent of 6,000 attention-check trials.",
+      "suggestion": "Respondents who fail these items can be excluded, but these checks alone do not protect data quality. In opt-in online samples, a part of the respondents gives bogus or insincere answers, and common checks miss most of them (Kennedy et al., 2021). Autonomous agents based on large language models pass standard attention checks almost every time (Westwood, 2025). Combine several indicators (for example, open-ended answers, response times, and consistency checks), prefer probability-based panels for estimates, and report how you screened cases.",
+      "sources": [
+        "s8",
+        "s9",
+        "s10"
+      ]
     },
     {
       "id": "c7",
+      "type": "comment",
       "section": "7 Data protection",
       "title": "GDPR replaced Directive 95/46/EC",
       "kind": "revise",
@@ -122,12 +224,15 @@
       "direction": "supersedes",
       "priority": "essential",
       "original": "Follow the EU Data Protection Directive (95/46/EC) and the national data protection law.",
-      "proposed": "Follow the EU General Data Protection Regulation (Regulation (EU) 2016/679, GDPR), which applies since 25 May 2018 and repealed Directive 95/46/EC, and the national data protection law.",
-      "rationale": "The guide cites a repealed legal instrument. A reader who follows it does not meet current legal obligations.",
-      "sources": ["s11"]
+      "comment": "The guide cites a repealed legal instrument. A reader who follows it does not meet current legal obligations.",
+      "suggestion": "Follow the EU General Data Protection Regulation (Regulation (EU) 2016/679, GDPR), which applies since 25 May 2018 and repealed Directive 95/46/EC, and the national data protection law.",
+      "sources": [
+        "s11"
+      ]
     },
     {
       "id": "c8",
+      "type": "comment",
       "section": "8 Accessibility",
       "title": "Cite WCAG 2.2",
       "kind": "reference",
@@ -135,12 +240,15 @@
       "direction": "supersedes",
       "priority": "important",
       "original": "Follow the Web Content Accessibility Guidelines (WCAG) 2.0.",
-      "proposed": "Follow the current Web Content Accessibility Guidelines (WCAG 2.2, W3C Recommendation since October 2023).",
-      "rationale": "WCAG 2.2 adds nine success criteria to 2.1, several of them about touch targets and input on mobile devices, which connects to c1.",
-      "sources": ["s12"]
+      "comment": "WCAG 2.2 adds nine success criteria to 2.1, several of them about touch targets and input on mobile devices, which connects to c1.",
+      "suggestion": "Follow the current Web Content Accessibility Guidelines (WCAG 2.2, W3C Recommendation since October 2023).",
+      "sources": [
+        "s12"
+      ]
     },
     {
       "id": "c9",
+      "type": "comment",
       "section": "References",
       "title": "Update the reference list",
       "kind": "reference",
@@ -148,14 +256,34 @@
       "direction": "extends",
       "priority": "essential",
       "original": "- AAPOR. (2011). *Standard definitions: Final dispositions of case codes and outcome rates for surveys* (7th ed.). American Association for Public Opinion Research.\n- Couper, M. P. (2008). *Designing effective web surveys*. Cambridge University Press.\n- Directive 95/46/EC of the European Parliament and of the Council of 24 October 1995 on the protection of individuals with regard to the processing of personal data and on the free movement of such data.\n- W3C. (2008). *Web Content Accessibility Guidelines (WCAG) 2.0*. W3C Recommendation.",
-      "proposed": "- American Association for Public Opinion Research. (2023). *Standard definitions: Final dispositions of case codes and outcome rates for surveys* (10th ed.). AAPOR.\n- Antoun, C., Couper, M. P., & Conrad, F. G. (2017). Effects of mobile versus PC web on survey response quality: A crossover experiment in a probability web panel. *Public Opinion Quarterly, 81*(S1), 280–306. https://doi.org/10.1093/poq/nfw088\n- Couper, M. P. (2008). *Designing effective web surveys*. Cambridge University Press.\n- Couper, M. P., Antoun, C., & Mavletova, A. (2017). Mobile web surveys: A total survey error perspective. In P. P. Biemer et al. (Eds.), *Total survey error in practice* (pp. 133–154). Wiley. https://doi.org/10.1002/9781119041702.ch7\n- Gummer, T., Quoß, F., & Roßmann, J. (2019). Does increasing mobile device coverage reduce heterogeneity in completing web surveys on smartphones? *Social Science Computer Review, 37*(3), 371–384. https://doi.org/10.1177/0894439318766836\n- Kennedy, C., Hatley, N., Lau, A., Mercer, A., Keeter, S., Ferno, J., & Asare-Marfo, D. (2021). Strategies for detecting insincere respondents in online polling. *Public Opinion Quarterly, 85*(4), 1050–1075. https://doi.org/10.1093/poq/nfab057\n- Lugtig, P., & Toepoel, V. (2016). The use of PCs, smartphones, and tablets in a probability-based panel survey: Effects on survey measurement error. *Social Science Computer Review, 34*(1), 78–94. https://doi.org/10.1177/0894439315574248\n- Mavletova, A., Couper, M. P., & Lebedev, D. (2018). Grid and item-by-item formats in PC and mobile web surveys. *Social Science Computer Review, 36*(6), 647–668. https://doi.org/10.1177/0894439317735307\n- Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (General Data Protection Regulation). OJ L 119, 4.5.2016, pp. 1–88.\n- Revilla, M., & Couper, M. P. (2018). Comparing grids with vertical and horizontal item-by-item formats for PCs and smartphones. *Social Science Computer Review, 36*(3), 349–368. https://doi.org/10.1177/0894439317715626\n- W3C. (2023). *Web Content Accessibility Guidelines (WCAG) 2.2*. W3C Recommendation.\n- Westwood, S. J. (2025). The potential existential threat of large language models to online survey research. *Proceedings of the National Academy of Sciences, 122*(47), e2518075122. https://doi.org/10.1073/pnas.2518075122",
-      "rationale": "Adds the references that c1 to c8 cite and removes the superseded ones. If you reject a change above, remove its reference here with Edit.",
+      "comment": "Adds the references that c1 to c8 cite and removes the superseded ones. If you reject a change above, remove its reference here with Edit.",
+      "suggestion": "- American Association for Public Opinion Research. (2023). *Standard definitions: Final dispositions of case codes and outcome rates for surveys* (10th ed.). AAPOR.\n- Antoun, C., Couper, M. P., & Conrad, F. G. (2017). Effects of mobile versus PC web on survey response quality: A crossover experiment in a probability web panel. *Public Opinion Quarterly, 81*(S1), 280–306. https://doi.org/10.1093/poq/nfw088\n- Couper, M. P. (2008). *Designing effective web surveys*. Cambridge University Press.\n- Couper, M. P., Antoun, C., & Mavletova, A. (2017). Mobile web surveys: A total survey error perspective. In P. P. Biemer et al. (Eds.), *Total survey error in practice* (pp. 133–154). Wiley. https://doi.org/10.1002/9781119041702.ch7\n- Gummer, T., Quoß, F., & Roßmann, J. (2019). Does increasing mobile device coverage reduce heterogeneity in completing web surveys on smartphones? *Social Science Computer Review, 37*(3), 371–384. https://doi.org/10.1177/0894439318766836\n- Kennedy, C., Hatley, N., Lau, A., Mercer, A., Keeter, S., Ferno, J., & Asare-Marfo, D. (2021). Strategies for detecting insincere respondents in online polling. *Public Opinion Quarterly, 85*(4), 1050–1075. https://doi.org/10.1093/poq/nfab057\n- Lugtig, P., & Toepoel, V. (2016). The use of PCs, smartphones, and tablets in a probability-based panel survey: Effects on survey measurement error. *Social Science Computer Review, 34*(1), 78–94. https://doi.org/10.1177/0894439315574248\n- Mavletova, A., Couper, M. P., & Lebedev, D. (2018). Grid and item-by-item formats in PC and mobile web surveys. *Social Science Computer Review, 36*(6), 647–668. https://doi.org/10.1177/0894439317735307\n- Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (General Data Protection Regulation). OJ L 119, 4.5.2016, pp. 1–88.\n- Revilla, M., & Couper, M. P. (2018). Comparing grids with vertical and horizontal item-by-item formats for PCs and smartphones. *Social Science Computer Review, 36*(3), 349–368. https://doi.org/10.1177/0894439317715626\n- W3C. (2023). *Web Content Accessibility Guidelines (WCAG) 2.2*. W3C Recommendation.\n- Westwood, S. J. (2025). The potential existential threat of large language models to online survey research. *Proceedings of the National Academy of Sciences, 122*(47), e2518075122. https://doi.org/10.1073/pnas.2518075122",
       "sources": []
+    },
+    {
+      "id": "c10",
+      "type": "correction",
+      "section": "1 Introduction",
+      "title": "Spelling: \"colect\"",
+      "original": "method to colect data",
+      "proposed": "method to collect data"
+    },
+    {
+      "id": "c11",
+      "type": "correction",
+      "section": "4.1 Question wording",
+      "title": "Spelling: \"responce\"",
+      "original": "a responce scale",
+      "proposed": "a response scale"
     }
   ],
   "sources": [
     {
-      "id": "s1", "type": "peer-reviewed", "verified": true, "year": 2019, "venue": "Social Science Computer Review",
+      "id": "s1",
+      "type": "peer-reviewed",
+      "verified": true,
+      "year": 2019,
+      "venue": "Social Science Computer Review",
       "citation": "Gummer, T., Quoß, F., & Roßmann, J. (2019). Does increasing mobile device coverage reduce heterogeneity in completing web surveys on smartphones? Social Science Computer Review, 37(3), 371–384.",
       "doi": "10.1177/0894439318766836",
       "verificationNote": "DOI resolves. Published online in April 2018, print issue June 2019.",
@@ -163,7 +291,11 @@
       "relevance": "Contradicts the claim that smartphone completion is rare."
     },
     {
-      "id": "s2", "type": "book", "verified": true, "year": 2017, "venue": "Total Survey Error in Practice (Wiley)",
+      "id": "s2",
+      "type": "book",
+      "verified": true,
+      "year": 2017,
+      "venue": "Total Survey Error in Practice (Wiley)",
       "citation": "Couper, M. P., Antoun, C., & Mavletova, A. (2017). Mobile web surveys: A total survey error perspective. In P. P. Biemer et al. (Eds.), Total survey error in practice (pp. 133–154). Wiley.",
       "doi": "10.1002/9781119041702.ch7",
       "verificationNote": "Registry entry and table of contents checked. The chapter text was not accessible, so the summary describes its scope only.",
@@ -171,7 +303,11 @@
       "relevance": "Frames device effects as error sources and supports design for all devices."
     },
     {
-      "id": "s3", "type": "peer-reviewed", "verified": true, "year": 2017, "venue": "Public Opinion Quarterly",
+      "id": "s3",
+      "type": "peer-reviewed",
+      "verified": true,
+      "year": 2017,
+      "venue": "Public Opinion Quarterly",
       "citation": "Antoun, C., Couper, M. P., & Conrad, F. G. (2017). Effects of mobile versus PC web on survey response quality: A crossover experiment in a probability web panel. Public Opinion Quarterly, 81(S1), 280–306.",
       "doi": "10.1093/poq/nfw088",
       "verificationNote": "DOI resolves. Full title checked on the publisher page.",
@@ -179,7 +315,11 @@
       "relevance": "Removes the quality argument for redirecting smartphone users. Qualifies the slider advice."
     },
     {
-      "id": "s4", "type": "peer-reviewed", "verified": true, "year": 2016, "venue": "Social Science Computer Review",
+      "id": "s4",
+      "type": "peer-reviewed",
+      "verified": true,
+      "year": 2016,
+      "venue": "Social Science Computer Review",
       "citation": "Lugtig, P., & Toepoel, V. (2016). The use of PCs, smartphones, and tablets in a probability-based panel survey: Effects on survey measurement error. Social Science Computer Review, 34(1), 78–94.",
       "doi": "10.1177/0894439315574248",
       "verificationNote": "DOI resolves. Published online in February 2015.",
@@ -187,7 +327,11 @@
       "relevance": "Shows that device differences partly reflect who uses which device."
     },
     {
-      "id": "s5", "type": "peer-reviewed", "verified": true, "year": 2018, "venue": "Social Science Computer Review",
+      "id": "s5",
+      "type": "peer-reviewed",
+      "verified": true,
+      "year": 2018,
+      "venue": "Social Science Computer Review",
       "citation": "Mavletova, A., Couper, M. P., & Lebedev, D. (2018). Grid and item-by-item formats in PC and mobile web surveys. Social Science Computer Review, 36(6), 647–668.",
       "doi": "10.1177/0894439317735307",
       "verificationNote": "DOI resolves. Note: the grid penalties occurred on PC and on mobile, not only on smartphones.",
@@ -195,14 +339,22 @@
       "relevance": "Qualifies the recommendation to use grids."
     },
     {
-      "id": "s6", "type": "peer-reviewed", "verified": false, "year": 2018, "venue": "Social Science Computer Review",
+      "id": "s6",
+      "type": "peer-reviewed",
+      "verified": false,
+      "year": 2018,
+      "venue": "Social Science Computer Review",
       "citation": "Revilla, M., & Couper, M. P. (2018). Comparing grids with vertical and horizontal item-by-item formats for PCs and smartphones. Social Science Computer Review, 36(3), 349–368.",
       "doi": "10.1177/0894439317715626",
       "verificationNote": "The Crossref entry exists, but the agent did not read the abstract or the findings. Check that the study supports the smartphone recommendation in c3.",
       "relevance": "Expected to compare grid formats on PCs and smartphones."
     },
     {
-      "id": "s7", "type": "standard", "verified": true, "year": 2023, "venue": "American Association for Public Opinion Research",
+      "id": "s7",
+      "type": "standard",
+      "verified": true,
+      "year": 2023,
+      "venue": "American Association for Public Opinion Research",
       "citation": "American Association for Public Opinion Research. (2023). Standard definitions: Final dispositions of case codes and outcome rates for surveys (10th ed.). AAPOR.",
       "url": "https://aapor.org/wp-content/uploads/2023/05/Standards-Definitions-10th-edition.pdf",
       "verificationNote": "PDF opened. The 7th edition is from 2011, the 9th from 2016.",
@@ -210,7 +362,11 @@
       "relevance": "Replaces the 7th edition cited in the guide."
     },
     {
-      "id": "s8", "type": "report", "verified": true, "year": 2020, "venue": "Pew Research Center",
+      "id": "s8",
+      "type": "report",
+      "verified": true,
+      "year": 2020,
+      "venue": "Pew Research Center",
       "citation": "Kennedy, C., Hatley, N., Lau, A., Mercer, A., Keeter, S., Ferno, J., & Asare-Marfo, D. (2020). Assessing the risks to online polls from bogus respondents. Pew Research Center.",
       "url": "https://www.pewresearch.org/methods/2020/02/18/assessing-the-risks-to-online-polls-from-bogus-respondents/",
       "verificationNote": "Report page opened. Not peer-reviewed; the peer-reviewed version is s9.",
@@ -218,7 +374,11 @@
       "relevance": "Contradicts the claim that attention checks are sufficient."
     },
     {
-      "id": "s9", "type": "peer-reviewed", "verified": true, "year": 2021, "venue": "Public Opinion Quarterly",
+      "id": "s9",
+      "type": "peer-reviewed",
+      "verified": true,
+      "year": 2021,
+      "venue": "Public Opinion Quarterly",
       "citation": "Kennedy, C., Hatley, N., Lau, A., Mercer, A., Keeter, S., Ferno, J., & Asare-Marfo, D. (2021). Strategies for detecting insincere respondents in online polling. Public Opinion Quarterly, 85(4), 1050–1075.",
       "doi": "10.1093/poq/nfab057",
       "verificationNote": "DOI resolves. Published online in November 2021.",
@@ -226,7 +386,11 @@
       "relevance": "Peer-reviewed evidence for c6."
     },
     {
-      "id": "s10", "type": "peer-reviewed", "verified": true, "year": 2025, "venue": "PNAS",
+      "id": "s10",
+      "type": "peer-reviewed",
+      "verified": true,
+      "year": 2025,
+      "venue": "PNAS",
       "citation": "Westwood, S. J. (2025). The potential existential threat of large language models to online survey research. Proceedings of the National Academy of Sciences, 122(47), e2518075122.",
       "doi": "10.1073/pnas.2518075122",
       "verificationNote": "DOI resolves. Published online in November 2025.",
@@ -234,7 +398,11 @@
       "relevance": "Shows that attention checks cannot detect AI-generated responses."
     },
     {
-      "id": "s11", "type": "regulation", "verified": true, "year": 2016, "venue": "Official Journal of the European Union, L 119",
+      "id": "s11",
+      "type": "regulation",
+      "verified": true,
+      "year": 2016,
+      "venue": "Official Journal of the European Union, L 119",
       "citation": "Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation). OJ L 119, 4.5.2016, pp. 1–88.",
       "url": "http://data.europa.eu/eli/reg/2016/679/oj",
       "verificationNote": "Confirmed from the official EU Publications Office metadata. The EUR-Lex text page blocked automated access.",
@@ -242,7 +410,11 @@
       "relevance": "Replaces the legal instrument cited in the guide."
     },
     {
-      "id": "s12", "type": "standard", "verified": true, "year": 2023, "venue": "W3C",
+      "id": "s12",
+      "type": "standard",
+      "verified": true,
+      "year": 2023,
+      "venue": "W3C",
       "citation": "W3C. (2023). Web Content Accessibility Guidelines (WCAG) 2.2. W3C Recommendation, 5 October 2023.",
       "url": "https://www.w3.org/TR/2023/REC-WCAG22-20231005/",
       "verificationNote": "Checked on w3.org. An updated 2.2 Recommendation is dated 12 December 2024.",
@@ -251,8 +423,23 @@
     }
   ],
   "search": {
-    "databases": ["Crossref API", "doi.org", "publisher pages (OUP, SAGE, Wiley, PNAS)", "Pew Research Center", "AAPOR", "EU Publications Office", "w3.org"],
-    "terms": ["mobile web survey device effects", "smartphone completion web survey selectivity", "grid item-by-item smartphone", "bogus respondents online panel", "LLM synthetic respondents attention check", "AAPOR standard definitions edition"],
+    "databases": [
+      "Crossref API",
+      "doi.org",
+      "publisher pages (OUP, SAGE, Wiley, PNAS)",
+      "Pew Research Center",
+      "AAPOR",
+      "EU Publications Office",
+      "w3.org"
+    ],
+    "terms": [
+      "mobile web survey device effects",
+      "smartphone completion web survey selectivity",
+      "grid item-by-item smartphone",
+      "bogus respondents online panel",
+      "LLM synthetic respondents attention check",
+      "AAPOR standard definitions edition"
+    ],
     "dateRange": "2014-06-01 to 2026-10-21",
     "inclusion": "Peer-reviewed studies with experimental or large pooled designs, official standards and legal texts, and major methods reports.",
     "exclusion": "Vendor white papers, blog posts, and single small convenience samples.",

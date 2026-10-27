@@ -4,7 +4,7 @@
 
 ## 1 Introduction
 
-Web surveys are a fast and low-cost method to collect data from large samples. They also make complex questionnaires possible: filters, randomization, and multimedia content. This guide gives practical recommendations for researchers who plan a web survey in the social sciences.
+Web surveys are a fast and low-cost method to colect data from large samples. They also make complex questionnaires possible: filters, randomization, and multimedia content. This guide gives practical recommendations for researchers who plan a web survey in the social sciences.
 
 ## 2 Coverage and sampling
 
@@ -22,7 +22,7 @@ Test the questionnaire in the two or three most common web browsers before field
 
 ### 4.1 Question wording
 
-Use short, simple questions. Avoid double-barrelled questions, double negatives, and technical terms. Give every point of a response scale a clear verbal label.
+Use short, simple questions. Avoid double-barrelled questions, double negatives, and technical terms. Give every point of a responce scale a clear verbal label.
 
 ### 4.2 Layout
 

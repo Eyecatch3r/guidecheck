@@ -4,6 +4,7 @@ description: A galley-proof review desk for AI-proposed, sourced updates to publ
 colors:
   blueline: "#1d58c0"
   blue-wash: "#e3ecfb"
+  blue-wash-deep: "#c9daf6"
   red-pencil: "#b8231a"
   navy: "#132748"
   navy-2: "#1d3864"
@@ -133,7 +134,7 @@ components:
 
 **Creative North Star: "The Galley Proof"**
 
-Each proposed change is a proof on a sheet. The agent marks the sheet in blueline blue. The reviewer answers in red pencil. A deletion is a struck line. An insertion is new text in the agent's ink, with a caret mark. The reviewer's decision is a hand-drawn ring in the margin with one word: "OK", "stet", or "amended". The interface does not use the red and green line diff of code review.
+The agent hands in two kinds of finding. A **correction** (typing, spelling, punctuation) is a proof mark that changes the text. A **comment** is a marginal note on a highlighted passage, as in Word: it never changes the text. Each finding is a proof on a sheet. The agent marks the sheet in blueline blue. The reviewer answers in red pencil. A deletion is a struck line. An insertion is new text in the agent's ink, with a caret mark. The reviewer's decision is a hand-drawn ring in the margin with one word: "OK", "stet", or "amended". The interface does not use the red and green line diff of code review.
 
 The world is a cool galley-white sheet on a blue-grey desk, under a deep navy shell bar. Guide text uses a serif at reading size. Interface labels use a sans. Numbers, line numbers, and identifiers use monospace. Hairline rules divide content. Slug lines carry metadata. The density is that of a working desk: three columns on wide screens, one change in front of the reviewer at a time.
 
@@ -152,7 +153,8 @@ A cool, low-chroma paper-and-desk palette with two saturated inks and one cautio
 
 ### Primary
 - **Blueline Blue** (blueline): The agent's ink. It colors inserted text, the strike line on deletions, proof marks in the margin, links, the focus ring, and the dashed full-text hover tint (5% alpha).
-- **Blue Wash** (blue-wash): Text selection and the hover fill of popover items.
+- **Blue Wash** (blue-wash): The highlight of a commented passage, text selection, and the hover fill of popover items.
+- **Blue Wash Deep** (blue-wash-deep): A commented passage while its balloon is pointed at, in Full text.
 
 ### Secondary
 - **Red Pencil** (red-pencil): The reviewer's ink. It colors the decision ring, the decision word in the change list, the reviewer's own insertions and deletions, the stet underline, the edit field border and caret, the note focus rule, and the reject button on hover.
@@ -248,6 +250,12 @@ Plain, quiet, and labeled with their key.
 ### Galley Sheet (signature)
 The sheet carries one change. A slug line on a soft hairline holds significance, direction, priority, and position. The change number sits in the left margin in monospace. The proof-marked text sits between two soft hairlines. Deletions are Ink 3 with a 2px Blueline Blue strike. Insertions are Blueline Blue with a caret mark. Rationale follows in serif, then the decision bar.
 
+### Comment (signature)
+A comment never changes the text. On the sheet, its passage is shown in its paragraph: the surrounding text in Ink 3, the anchor in Blue Wash with a 1.5px Blueline underline and a superscript monospace tag (`C06`). Under it, a one-line note says the text does not change. The comment follows under a label row that repeats the blue tag, in serif 17px Ink. Suggested wording, if any, follows as a proof-marked galley at 16.5px against the anchor; the reviewer's own wording replaces it in red. A dismissed comment loses its wash and takes the dotted red stet underline. The slug line starts with a balloon glyph and "Comment"; a correction starts with a caret and "Correction" and carries no significance, direction, or priority.
+
+### Comment Balloons (Full text)
+Full text is the guide as a Word reviewer sees it. Corrections sit inline as proof marks. Comments are highlights with a tag, and a right-hand margin (a Rule Soft hairline, 240px or wider) holds one balloon per comment: a Blueline top rule, the tag and significance dot, the decision word in red italic, a sans title, and four lines of serif comment text. Each balloon sits level with its highlight; when balloons crowd, a balloon pushed more than 24px from its highlight shows only its title and opens fully on hover. Pointing at a highlight or a balloon lights the other. A hovered balloon lifts as paper. Under 860px the margin hides and the tags remain.
+
 ### Decision Ring (signature)
 The reviewer's answer is an italic serif word ("OK", "stet", "amended") inside a hand-drawn Red Pencil loop in the margin. On a new decision the loop draws itself in .42s (`cubic-bezier(.16, 1, .3, 1)`) and the word fades in over .2s. Reduced motion removes both animations.
 
@@ -258,7 +266,8 @@ Each source is a block between Rule hairlines: monospace ID, type, serif citatio
 
 ### Do:
 - **Do** set every agent mark in Blueline Blue and every reviewer mark in Red Pencil.
-- **Do** show a proposed deletion as struck text and an insertion as new text with a caret, on the sheet.
+- **Do** show a correction as struck text and new text with a caret, on the sheet.
+- **Do** show a comment as a highlighted passage with a tag; never strike or insert text for a comment.
 - **Do** put the decision word in a hand-drawn ring in the left margin.
 - **Do** mark warnings in Caution Amber between a top and a bottom hairline.
 - **Do** show the keyboard key on each decision control and each tab.

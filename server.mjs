@@ -62,7 +62,15 @@ export async function checkRun(dir) {
     if (original.indexOf(c.original, at + 1) >= 0) problems.push(`${c.id}: "original" text occurs more than one time`);
     spans.push([at, at + c.original.length, c.id]);
     for (const s of c.sources || []) if (!sourceIds.has(s)) problems.push(`${c.id}: source "${s}" is not in sources`);
-    if (c.significance !== 'incremental' && !(c.sources || []).length) problems.push(`${c.id}: no source for a ${c.significance} change`);
+    // Version 1 runs have no type: every change is a comment.
+    const type = c.type || (run.schemaVersion >= 2 ? '' : 'comment');
+    if (type === 'correction') {
+      if (typeof c.proposed !== 'string') problems.push(`${c.id}: a correction needs "proposed"`);
+      continue;
+    }
+    if (type !== 'comment') { problems.push(`${c.id}: "type" must be "comment" or "correction"`); continue; }
+    if (!(c.comment || c.rationale)) problems.push(`${c.id}: a comment needs "comment" text`);
+    if (c.significance !== 'incremental' && !(c.sources || []).length) problems.push(`${c.id}: no source for a ${c.significance} comment`);
   }
   spans.sort((a, b) => a[0] - b[0]);
   for (let i = 1; i < spans.length; i++) if (spans[i][0] < spans[i - 1][1]) problems.push(`${spans[i - 1][2]} and ${spans[i][2]} overlap`);

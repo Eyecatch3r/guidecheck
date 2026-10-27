@@ -76,33 +76,45 @@ The interface has three views:
 
 | View | Content |
 |---|---|
-| Changes | One change at a time: proof-marked text, the agent's reason, decision buttons, and the sources |
+| Changes | One finding at a time: a comment on a highlighted passage, or a proof-marked correction, with decision buttons and the sources |
 | Assessment | Verdict, timeliness by dimension, ranked developments, what does not need to change, search strategy, all sources, and the full report |
-| Full text | The complete guide with every change in place. Click a change to open it. |
+| Full text | The complete guide as in Word: corrections as marks in the text, comments as highlights with balloons in the right margin. Click a highlight, a balloon, or a correction to open it. |
+
+The agent writes two kinds of finding:
+
+- **Comment.** A finding about content, for example an outdated claim or a missing reference. A comment works like a comment in Word: it highlights a passage and does not change the text. It can include suggested wording.
+- **Correction.** An error of form, for example a typing error. A correction changes the text when you approve it. It needs no comment and no source.
+
+Use the switch above the list to show all findings, only comments, or only corrections.
 
 How to read the marks:
 
 | Mark | Meaning |
 |---|---|
+| Blue highlight | The passage that a comment refers to. The text does not change. |
 | Struck text | The agent proposes to remove this text |
 | Blue text | The agent proposes to add this text |
 | Red text | Your own edit |
-| `OK` stamp | You approved the change |
-| `stet` stamp | You rejected the change ("let it stand") |
-| `amended` stamp | You edited the proposed text |
-| Dot size | Significance: major, significant, relevant. An open dot is incremental. |
+| `OK` stamp | You approved the correction or accepted the comment |
+| `stet` stamp | You rejected the correction or dismissed the comment ("let it stand") |
+| `amended` stamp | You edited the correction or the suggested wording |
+| Dot size | Significance of a comment: major, significant, relevant. An open dot is incremental. |
+| Caret | A correction |
 
 To decide a change:
 
-1. Read the marked text and the reason.
+1. Read the highlighted passage and the comment, or the marked correction.
 2. Check the sources in the right column. A source with a yellow "Not verified" label needs your check.
 3. Do one of these actions:
-   - Press `A` to approve the change.
-   - Press `E` to edit the proposed text. Press `Ctrl+Enter` to save your edit.
-   - Press `R` to reject the change.
+   - Press `A` to accept the comment or approve the correction.
+   - Press `E` to edit the suggested wording or the correction. Press `Ctrl+Enter` to save your edit.
+   - Press `R` to dismiss the comment or reject the correction.
 4. Optional: press `N` and write a note.
 
-To move a change into the Word file of the guide, press `C` or select **Copy text**. The interface copies the proposed text, or your edited text, as plain text without Markdown symbols. Paste it into Word.
+The Word file is the master of the guide. To move a finding into Word, press `C`:
+
+- For a comment, **Copy comment** copies the comment, the suggested wording (or your wording), and the citations of its sources as plain text. Paste it into a Word comment on the same passage.
+- For a correction, **Copy text** copies the corrected text without Markdown symbols.
 
 After a decision, the interface opens the next change that is not decided. Press `U` to undo a decision. Press `J` and `K` to move between changes. Press `S` to show the original and the proposal side by side.
 
@@ -112,6 +124,16 @@ Write your name in the top bar before you start. The interface records it with e
 
 - **Local server (`node server.mjs`):** The interface saves each decision to `runs/<guide>/<runId>/decisions.json` and `revised.md`. The top bar shows "Saved to repository".
 - **GitHub Pages (read-only):** The interface keeps decisions in your browser. Select **Export**, download `decisions.json` and `revised.md`, put both files in the run folder, and commit them.
+
+## Export a Word file
+
+Select **Export** > **Word file (.docx)**. The interface makes `<guide>-<runId>-review.docx` from the guide:
+
+- Approved and edited corrections are applied to the text.
+- Each accepted comment is a real Word comment on its passage. The comment holds the title, the comment text, the suggested wording (or your wording), the citations of its sources, and your note. The author is "Guidecheck" and the agent.
+- Pending and dismissed comments, and pending and rejected corrections, are not in the file.
+
+The Word file is made from the Markdown version of the guide. Headings, lists, tables, links, and figures are kept, but the layout is not the layout of the published guide. Use it to review the comments in Word, or to compare it with the master file side by side. It works on the local server and on GitHub Pages.
 
 ## Adopt the revised guide
 
@@ -129,6 +151,7 @@ guides/<guide>/                guide.md, guide.json, optional prompt.md
 runs/<guide>/<runId>/          original.md, report.md, run.json, decisions.json, revised.md
 runs/index.json                list of runs for the interface
 index.html, app.js, styles.css interface (no build step)
+docx.js                        Word export: builds the .docx in the browser
 server.mjs                     local server, run check, and index builder
 .claude/commands/              /add-guide and /check-guide for Claude Code
 ```
@@ -141,7 +164,7 @@ The agent runs this check after each run. You can also run it yourself:
 node server.mjs --check
 ```
 
-The check makes sure that every change refers to text that exists exactly one time in the original, that no two changes overlap, that every source ID exists, and that every change above "incremental" has a source.
+The check makes sure that every finding refers to text that exists exactly one time in the original, that no two findings overlap, that every source ID exists, and that every comment above "incremental" has a source.
 
 If you add, move, or delete a run by hand, rebuild the run list:
 
@@ -159,7 +182,7 @@ GitHub Pages shows the interface in read-only mode. Decisions saved through the 
 
 ## About the demo
 
-The guide "Web Surveys: A Practical Guide (demo)" and its run are synthetic. The guide is not a real publication. The sources in the demo run are real publications. An agent checked their DOIs and registry entries on 2026-10-21. One source is deliberately marked "Not verified" to show that state.
+The guide "Web Surveys: A Practical Guide (demo)" and its run are synthetic. The guide is not a real publication. The sources in the demo run are real publications. An agent checked their DOIs and registry entries on 2026-10-21. One source is deliberately marked "Not verified" to show that state. The demo guide contains two deliberate typing errors ("colect", "responce") to show corrections.
 
 ## Limits
 

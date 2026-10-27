@@ -25,11 +25,14 @@ const VERDICT = {
 const LEVEL = { reference: 'Reference-level updating', substantive: 'Substantive updating', structural: 'Structural revision', conceptual: 'Conceptual reconceptualization' };
 const SOURCE_TYPE = { 'peer-reviewed': 'Peer-reviewed', preprint: 'Preprint', book: 'Book or chapter', report: 'Report', standard: 'Standard', regulation: 'Regulation', editorial: 'Editorial', other: 'Other' };
 const MARK = { approved: 'OK', rejected: 'stet', edited: 'amended' };
+// Two kinds of finding. A correction fixes an error of form in the text. A comment is anchored to a passage and leaves the text as it is.
+const isComment = (c) => c.type === 'comment';
+const TYPE = { comment: 'Comment', correction: 'Correction' };
 
 const S = {
   runs: [], writable: false, run: null, original: '', report: '', dec: {},
   i: 0, tab: 'changes', split: false, editing: false, fresh: null,
-  filter: { status: 'all', sig: 'all' }, reviewer: '',
+  filter: { type: 'all', status: 'all', sig: 'all' }, reviewer: '',
 };
 
 // ---------- Diff (word level, longest common subsequence) ----------
@@ -93,6 +96,7 @@ const lineOf = (c) => S.original.slice(0, c.at).split('\n').length;
 const lineRange = (c) => { const a = lineOf(c), b = a + (c.original.match(/\n/g) || []).length; return a === b ? `l. ${a}` : `ll. ${a}–${b}`; };
 const PROOF = {
   caret: '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 12L7 3l5 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  query: '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 2.5h9v6.5h-5L4 11.5V9H2.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
   dele: '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 3c3 0 5 1 6 4s1 5 3 5c1.5 0 2-1.5 1-2.5S8.5 9 7 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
 };
 function marginMarks(ops) {
@@ -111,7 +115,9 @@ if (window.marked) window.marked.use({ renderer: { html: (t) => esc(typeof t ===
 // ---------- Decisions ----------
 const D = (id) => S.dec[id] || { status: 'pending' };
 const draftKey = () => `guidecheck:${S.run.guide}/${S.run.runId}`;
-const textFor = (c) => { const d = D(c.id); return d.status === 'approved' ? c.proposed : d.status === 'edited' ? d.text : c.original; };
+// Only corrections change the text. An accepted comment goes to the Word master through Copy comment.
+const textFor = (c) => { const d = D(c.id); if (isComment(c)) return c.original; return d.status === 'approved' ? c.proposed : d.status === 'edited' ? d.text : c.original; };
+const wording = (c) => { const d = D(c.id); return d.status === 'edited' ? d.text : c.suggestion; };
 
 function revised() {
   let out = '', pos = 0;
@@ -172,6 +178,7 @@ function decide(status, extra = {}) {
 const current = () => S.run?.changes[S.i];
 const visible = () => S.run.changes.map((c, i) => ({ c, i })).filter(({ c }) => {
   const st = D(c.id).status;
+  if (S.filter.type !== 'all' && c.type !== S.filter.type) return false;
   if (S.filter.status === 'pending' && st !== 'pending') return false;
   if (S.filter.status === 'decided' && st === 'pending') return false;
   if (S.filter.sig !== 'all' && c.significance !== S.filter.sig) return false;
@@ -256,7 +263,11 @@ async function openRun(guide, runId) {
   const [run, original, report, file] = await Promise.all([fetchJSON(base + 'run.json'), fetchText(base + 'original.md'), fetchText(base + 'report.md'), fetchJSON(base + 'decisions.json')]);
   if (!run || original == null) return showState('This run cannot be opened', `<p>The interface could not read <code>${esc(base)}run.json</code> or <code>original.md</code>. Run this command to find the problem:</p><pre>node server.mjs --check ${esc(base)}</pre>`);
   run.guide = guide; run.runId = runId;
-  run.changes.forEach((c) => { c.at = original.indexOf(c.original); });
+  run.changes.forEach((c) => {
+    // Version 1 runs have no type: every change is a comment, its rationale is the comment, its proposed text the suggested wording.
+    if (!c.type) Object.assign(c, { type: 'comment', comment: c.rationale, suggestion: c.proposed });
+    c.at = original.indexOf(c.original);
+  });
   run.changes.sort((a, b) => (a.at < 0) - (b.at < 0) || a.at - b.at);
   S.run = run; S.original = original; S.report = report || ''; S.i = 0; S.editing = false;
   S.dec = file?.decisions || {};
@@ -298,13 +309,16 @@ function render() {
 const no = (c) => c.id.replace(/^c(\d+)$/, (_, n) => 'C' + n.padStart(2, '0'));
 
 function renderList() {
+  const all = S.run.changes, n = (t) => all.filter((c) => t === 'all' || c.type === t).length;
+  $('#filterType').innerHTML = ['all', 'comment', 'correction'].map((t) =>
+    `<button data-type="${t}" aria-pressed="${S.filter.type === t}" ${t !== 'all' && !n(t) ? 'disabled' : ''}>${t === 'all' ? 'All' : TYPE[t] + 's'} <span class="num">${n(t)}</span></button>`).join('');
   const v = visible();
   $('#changeList').innerHTML = v.length ? v.map(({ c, i }) => {
     const st = D(c.id).status;
-    const weak = c.significance !== 'incremental' && !c.sources?.length;
+    const weak = isComment(c) && c.significance !== 'incremental' && !c.sources?.length;
     return `<li><button data-i="${i}" aria-current="${i === S.i}">
       <span class="no">${no(c)}</span>
-      <span class="dot ${esc(c.significance)}" title="${esc(c.significance)}"></span>
+      ${isComment(c) ? `<span class="dot ${esc(c.significance)}" title="Comment, ${esc(c.significance)}"></span>` : `<span class="glyph" title="Correction">${PROOF.caret}</span>`}
       <span class="t">${esc(c.title)}</span>
       <span class="mark${S.fresh === c.id ? ' fresh' : ''}">${MARK[st] || (c.at < 0 ? '<span class="warn">Text missing</span>' : weak ? '<span class="warn">No source</span>' : '')}</span>
       <span class="sec">${esc(c.section)}</span></button></li>`;
@@ -318,33 +332,45 @@ function renderList() {
 function renderSheet() {
   const c = current(), el = $('#sheet');
   if (!c) { el.innerHTML = '<p class="empty-list">This run has no changes.</p>'; return; }
-  const d = D(c.id), k = S.run.changes.indexOf(c) + 1;
-  const after = d.status === 'edited' ? d.text : c.proposed;
-  const ink = d.status === 'edited' ? 'reviewer' : 'agent';
-  let body;
-  if (S.editing) body = galley(c.original, $('#editText')?.value ?? after, 'reviewer');
-  else if (d.status === 'rejected') body = `<div class="galley"><span class="stet">${esc(c.original)}</span></div>`;
-  else body = galley(c.original, after, ink);
-
+  const d = D(c.id), k = S.run.changes.indexOf(c) + 1, com = isComment(c);
   el.innerHTML = `
     <span class="slug-no">${no(c)}</span>
     <div class="slug">
-      <span class="sig"><span class="dot ${esc(c.significance)}"></span>${esc(c.significance)}</span><span class="sep"></span>
+      <span class="type">${com ? PROOF.query : PROOF.caret}${TYPE[c.type]}</span>
+      ${com ? `<span class="sep"></span><span class="sig"><span class="dot ${esc(c.significance)}"></span>${esc(c.significance)}</span><span class="sep"></span>
       <span class="cap">${esc(c.direction)}</span><span class="sep"></span>
       <span class="cap">${esc(c.priority)}</span>
-      ${c.kind ? `<span class="sep"></span><span class="cap">${esc(c.kind)}</span>` : ''}
+      ${c.kind ? `<span class="sep"></span><span class="cap">${esc(c.kind)}</span>` : ''}` : ''}
       <span class="pos"><button class="btn quiet" data-act="prev" aria-label="Previous change (K)" title="Previous change (K)">${ICON.up}</button><span class="num">${k} / ${S.run.changes.length}</span><button class="btn quiet" data-act="next" aria-label="Next change (J)" title="Next change (J)">${ICON.down}</button></span>
     </div>
     <h1 class="change-title">${esc(c.title)}</h1>
     <p class="change-sec">${esc(c.section)}</p>
-    ${c.at < 0 ? `<p class="anchor-error">The original text of this change is not in <code>original.md</code>. The change cannot be applied. Ask the agent to correct it, then run <code>node server.mjs --check</code>.</p>` : ''}
-    <div class="diffbar">
-      <div class="seg" role="group" aria-label="Diff layout">
-        <button data-split="0" aria-pressed="${!S.split}">Marked text</button><button data-split="1" aria-pressed="${S.split}">Side by side</button>
-      </div>
-      <div class="legend"><span><del class="pm-del ink-agent">struck</del> removed</span><span><ins class="pm-ins ink-agent">blue</ins> added by agent</span><span><ins class="pm-ins ink-reviewer">red</ins> your edit</span></div>
-    </div>
-    <div class="galley-wrap" style="position:relative">
+    ${c.at < 0 ? `<p class="anchor-error">The ${com ? 'anchor' : 'original'} text of this ${com ? 'comment' : 'correction'} is not in <code>original.md</code>. ${com ? 'The comment has no place in the guide.' : 'The correction cannot be applied.'} Ask the agent to correct it, then run <code>node server.mjs --check</code>.</p>` : ''}
+    ${com ? commentBody(c, d) : correctionBody(c, d)}
+    ${S.editing ? '' : decideBar(c, d)}`;
+  if (S.editing) { const t = $('#editText'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); }
+}
+
+const diffbar = (legend = true) => `<div class="diffbar">
+  <div class="seg" role="group" aria-label="Diff layout">
+    <button data-split="0" aria-pressed="${!S.split}">Marked text</button><button data-split="1" aria-pressed="${S.split}">Side by side</button>
+  </div>
+  ${legend ? `<div class="legend"><span><del class="pm-del ink-agent">struck</del> removed</span><span><ins class="pm-ins ink-agent">blue</ins> added by agent</span><span><ins class="pm-ins ink-reviewer">red</ins> your edit</span></div>` : ''}
+</div>`;
+const editor = (value, label) => `<div class="editor">
+  <label for="editText">${label} The marks above update as you type.</label>
+  <textarea id="editText" spellcheck="true">${esc(value)}</textarea>
+  <div class="row"><button class="btn primary" data-act="saveEdit">${ICON.check}Save edit <kbd>Ctrl+Enter</kbd></button><button class="btn quiet" data-act="cancelEdit">Cancel <kbd>Esc</kbd></button></div>
+</div>`;
+
+function correctionBody(c, d) {
+  const after = d.status === 'edited' ? d.text : c.proposed;
+  let body;
+  if (S.editing) body = galley(c.original, $('#editText')?.value ?? after, 'reviewer');
+  else if (d.status === 'rejected') body = `<div class="galley"><span class="stet">${esc(c.original)}</span></div>`;
+  else body = galley(c.original, after, d.status === 'edited' ? 'reviewer' : 'agent');
+  return `${diffbar()}
+    <div class="galley-wrap">
       ${c.at < 0 ? '' : `<div class="margin-mark">
         <span class="ln">${lineRange(c)}</span>
         ${S.editing || d.status === 'rejected' ? '' : marginMarks(diff(c.original, after))}
@@ -352,24 +378,68 @@ function renderSheet() {
       </div>`}
       <div id="diffOut">${body}</div>
     </div>
-    ${S.editing ? `<div class="editor">
-      <label for="editText">Your wording (Markdown). The marks above update as you type.</label>
-      <textarea id="editText" spellcheck="true">${esc(after)}</textarea>
-      <div class="row"><button class="btn primary" data-act="saveEdit">${ICON.check}Save edit <kbd>Ctrl+Enter</kbd></button><button class="btn quiet" data-act="cancelEdit">Cancel <kbd>Esc</kbd></button></div>
-    </div>` : ''}
-    <section class="why"><h2>Why the agent proposes this</h2><p>${refs(c.rationale)}</p></section>
-    ${S.editing ? '' : `<div class="decide">
+    ${S.editing ? editor(after, 'Your correction (Markdown).') : ''}
+    ${c.rationale ? `<section class="why"><h2>Note from the agent</h2><p>${refs(c.rationale)}</p></section>` : ''}`;
+}
+
+// The commented passage in its paragraph, as in the guide. Long context is cut at a word boundary.
+function excerpt(c, d) {
+  const o = S.original, end = c.at + c.original.length, cut = 360;
+  // Paragraphs end at a blank line; guides converted on Windows use \r\n.
+  const gap = /\n[ \t\r]*\n/g;
+  let a = 0;
+  for (const m of o.slice(0, c.at).matchAll(gap)) a = m.index + m[0].length;
+  gap.lastIndex = end;
+  const b = gap.exec(o)?.index ?? o.length;
+  let before = o.slice(a, c.at), after = o.slice(end, b);
+  if (before.length > cut) before = '…' + before.slice(before.indexOf(' ', before.length - cut));
+  if (after.length > cut) after = after.slice(0, after.lastIndexOf(' ', cut)) + ' …';
+  return `<span class="ctx">${esc(before)}</span><mark class="anchor${d.status === 'rejected' ? ' dismissed' : ''}">${esc(c.original)}</mark><sup class="cm-ref">${no(c)}</sup><span class="ctx">${esc(after)}</span>`;
+}
+
+function commentBody(c, d) {
+  const sug = wording(c), ink = d.status === 'edited' ? 'reviewer' : 'agent';
+  let sugBody = '';
+  if (S.editing) sugBody = galley(c.original, $('#editText')?.value ?? sug ?? c.original, 'reviewer');
+  else if (sug != null) sugBody = galley(c.original, sug, ink);
+  const sugTitle = S.editing || d.status === 'edited' ? 'Your wording' : sug === '' ? 'Suggested: remove the passage' : 'Suggested wording';
+  return `<div class="galley-wrap">
+      ${c.at < 0 ? '' : `<div class="margin-mark">
+        <span class="ln">${lineRange(c)}</span>
+        <span class="pmark" title="Comment">${PROOF.query}</span>
+        ${MARK[d.status] && !S.editing ? ring(MARK[d.status], S.fresh === c.id) : ''}
+      </div>`}
+      <div class="galley anchored">${c.at < 0 ? esc(c.original) : excerpt(c, d)}</div>
+    </div>
+    <p class="anchor-note"><mark class="anchor">Highlighted</mark> passage of the guide. A comment does not change the text.</p>
+    <section class="comment${d.status === 'rejected' ? ' dismissed' : ''}">
+      <h2><span class="cm-tag">${no(c)}</span>Comment by the agent</h2>
+      <div class="cm-text">${refs(c.comment || '').split(/\n{2,}/).map((p) => `<p>${p}</p>`).join('')}</div>
+    </section>
+    ${S.editing || sug != null ? `<section class="suggest">
+      <h2>${sugTitle}</h2>
+      ${diffbar(false)}
+      <div id="diffOut">${sugBody}</div>
+      ${S.editing ? editor(sug ?? c.original, 'Wording for the Word file (Markdown). It does not change the guide here.') : ''}
+    </section>` : ''}`;
+}
+
+function decideBar(c, d) {
+  const com = isComment(c), off = c.at < 0 ? 'disabled' : '';
+  const editLabel = com ? (wording(c) == null ? 'Write wording' : 'Edit wording') : 'Edit';
+  const copyTitle = com ? 'Copy the comment, the wording, and the sources as plain text, for a comment in Word'
+    : `Copy the ${d.status === 'edited' ? 'edited' : 'corrected'} text without Markdown, for pasting into Word`;
+  return `<div class="decide">
       <div class="row">
-        <button class="btn primary" data-act="approve" ${c.at < 0 ? 'disabled' : ''}>${ICON.check}Approve <kbd>A</kbd></button>
-        <button class="btn" data-act="edit" ${c.at < 0 ? 'disabled' : ''}>${ICON.pen}Edit <kbd>E</kbd></button>
-        <button class="btn reject" data-act="reject" ${c.at < 0 ? 'disabled' : ''}>${ICON.x}Reject <kbd>R</kbd></button>
+        <button class="btn primary" data-act="approve" ${off}>${ICON.check}${com ? 'Accept' : 'Approve'} <kbd>A</kbd></button>
+        <button class="btn" data-act="edit" ${off}>${ICON.pen}${editLabel} <kbd>E</kbd></button>
+        <button class="btn reject" data-act="reject" ${off}>${ICON.x}${com ? 'Dismiss' : 'Reject'} <kbd>R</kbd></button>
         ${d.status !== 'pending' ? `<button class="btn quiet" data-act="reset">${ICON.undo}Undo <kbd>U</kbd></button>` : ''}
-        ${d.status !== 'rejected' && c.at >= 0 ? `<button class="btn quiet" data-act="copy" title="Copy the ${d.status === 'edited' ? 'edited' : 'proposed'} text without Markdown, for pasting into Word">${ICON.copy}<span>Copy text</span> <kbd>C</kbd></button>` : ''}
+        ${d.status !== 'rejected' && c.at >= 0 ? `<button class="btn quiet" data-act="copy" title="${copyTitle}">${ICON.copy}<span>${com ? 'Copy comment' : 'Copy text'}</span> <kbd>C</kbd></button>` : ''}
       </div>
       <label class="note"><span class="sr-only">Note</span><input id="note" placeholder="Note for this decision (optional). Press N to write." value="${esc(d.note || '')}" ${d.status === 'pending' ? 'disabled title="Decide first, then add a note."' : ''}></label>
       ${d.at ? `<span class="decided-by">${esc(MARK[d.status])} · ${d.by ? esc(d.by) + ' · ' : ''}${new Date(d.at).toLocaleString()}</span>` : ''}
-    </div>`}`;
-  if (S.editing) { const t = $('#editText'); t.focus(); t.setSelectionRange(t.value.length, t.value.length); }
+    </div>`;
 }
 
 function galley(a, b, ink) {
@@ -398,10 +468,11 @@ function renderSources() {
   const list = (c.sources || []).map((id) => S.run.sources.find((s) => s.id === id) || { id, citation: 'This source ID is not in the source list of run.json.', type: 'other', verified: false });
   el.innerHTML = `<h2><span>Sources for ${no(c)}</span><span class="num">${list.length}</span></h2>
     ${list.length ? `<ol class="srcs">${list.map(sourceItem).join('')}</ol>`
-      : `<p class="no-source">No source. ${c.significance === 'incremental' ? 'The agent rates this change incremental.' : 'Treat this change as weak until you find a source.'}</p>`}
+      : !isComment(c) ? '<p class="side-empty">A correction of form needs no source.</p>'
+      : `<p class="no-source">No source. ${c.significance === 'incremental' ? 'The agent rates this comment incremental.' : 'Treat this comment as weak until you find a source.'}</p>`}
     <div class="keys" aria-label="Keyboard shortcuts">
       <kbd>J</kbd><span>Next change</span><kbd>K</kbd><span>Previous change</span>
-      <kbd>A</kbd><span>Approve</span><kbd>E</kbd><span>Edit</span><kbd>R</kbd><span>Reject</span><kbd>U</kbd><span>Undo decision</span><kbd>C</kbd><span>Copy text for Word</span>
+      <kbd>A</kbd><span>Approve or accept</span><kbd>E</kbd><span>Edit text or wording</span><kbd>R</kbd><span>Reject or dismiss</span><kbd>U</kbd><span>Undo decision</span><kbd>C</kbd><span>Copy for Word</span>
       <kbd>S</kbd><span>Marked text or side by side</span><kbd>1 2 3</kbd><span>Changes, Assessment, Full text</span>
     </div>`;
 }
@@ -409,12 +480,14 @@ function renderSources() {
 function renderAssessment() {
   const r = S.run, [v, vNote] = VERDICT[r.verdict] || [r.verdict, ''];
   const src = (ids) => (ids || []).length ? `<span class="src-ref">${refs(ids.join(', '))}</span>` : '<span></span>';
-  const counts = ['major', 'significant', 'relevant', 'incremental'].map((s) => [s, r.changes.filter((c) => c.significance === s).length]).filter(([, n]) => n);
+  const comments = r.changes.filter(isComment), corrections = r.changes.length - comments.length;
+  const counts = ['major', 'significant', 'relevant', 'incremental'].map((s) => [s, comments.filter((c) => c.significance === s).length]).filter(([, n]) => n);
   $('#assessment').innerHTML = `
     <div class="verdict"><strong>${esc(v)}</strong><small>${esc(vNote)}</small>
       <p>${esc(r.summary)}</p>
       <div class="facts"><span>Revision level: <b>${esc(LEVEL[r.revisionLevel] || r.revisionLevel)}</b></span>
-        <span>Changes: <b class="num">${r.changes.length}</b> (${counts.map(([s, n]) => `${n} ${s}`).join(', ')})</span>
+        <span>Comments: <b class="num">${comments.length}</b>${counts.length ? ` (${counts.map(([s, n]) => `${n} ${s}`).join(', ')})` : ''}</span>
+        <span>Corrections: <b class="num">${corrections}</b></span>
         <span>Sources: <b class="num">${r.sources.length}</b>, ${r.sources.filter((s) => !s.verified).length} not verified</span>
         <span>Run: <b>${esc(r.createdAt)}</b></span></div>
     </div>
@@ -435,21 +508,83 @@ function renderAssessment() {
     ${S.report ? `<hr class="report-rule"><section><h2>Full report (report.md)</h2><div class="prose">${md(S.report)}</div></section>` : ''}`;
 }
 
+// Full text: the guide as a Word reviewer sees it. Corrections sit in the text as proof marks.
+// Comments highlight their passage and hang as balloons in the right margin.
+// Private-use characters mark the places in the Markdown source; they pass the parser and then become tags.
+const M = { corr: '', open: '', point: '', close: '', end: '' };
+function anchorMarks(text, i) {
+  return text.split('\n').map((line) => {
+    if (!line.trim()) return line;
+    // A table row cannot hold a highlight across cells: mark the point at its start.
+    const table = line.match(/^(\s*\|\s*)/);
+    if (table) return table[1] + M.point + i + M.end + line.slice(table[1].length);
+    const lead = line.match(/^(\s*(?:#{1,6}\s+|>\s*|[-*+]\s+|\d+\.\s+)*)/)[1];
+    const cr = line.endsWith('\r') ? '\r' : '';
+    return lead + M.open + i + M.end + line.slice(lead.length, line.length - cr.length) + M.close + cr;
+  }).join('\n');
+}
+function correctionInline(c, i) {
+  const d = D(c.id);
+  const inner = d.status === 'rejected' ? `<span class="stet">${esc(c.original)}</span>`
+    : d.status === 'pending' ? markup(diff(c.original, c.proposed), 'agent')
+    : esc(textFor(c));
+  return `<span class="fx-corr ${d.status}" data-goto="${i}" title="${no(c)} correction${MARK[d.status] ? ', ' + MARK[d.status] : ''}. Open for review.">${inner}</span>`;
+}
 function renderFull() {
-  let html = '', pos = 0;
-  for (const c of S.run.changes) {
+  const all = S.run.changes;
+  let src = '', pos = 0;
+  for (const c of all) {
     if (c.at < 0) continue;
-    html += md(S.original.slice(pos, c.at));
-    const d = D(c.id), i = S.run.changes.indexOf(c);
-    const inner = d.status === 'approved' || d.status === 'edited' ? `<div class="prose-in">${md(textFor(c))}</div>`
-      : d.status === 'rejected' ? `<div class="galley"><span class="stet">${esc(c.original)}</span></div>`
-      : `<div class="galley">${markup(diff(c.original, c.proposed), 'agent')}</div>`;
-    html += `<div class="fx" data-goto="${i}" title="Open ${no(c)} for review">
-      <div class="margin-mark"><span class="fx-no">${no(c)}</span><span class="ln">${lineRange(c)}</span>${MARK[d.status] ? ring(MARK[d.status]) : ''}</div>${inner}</div>`;
+    const i = all.indexOf(c);
+    src += S.original.slice(pos, c.at) + (isComment(c) ? anchorMarks(c.original, i) : M.corr + i + M.end);
     pos = c.at + c.original.length;
   }
-  html += md(S.original.slice(pos));
-  $('#full').innerHTML = `<div class="prose">${html}</div>`;
+  src += S.original.slice(pos);
+  const html = md(src)
+    .replace(/(\d+)/g, (_, i) => correctionInline(all[i], i))
+    .replace(/(\d+)/g, (_, i) => `<mark class="anchor${D(all[i].id).status === 'rejected' ? ' dismissed' : ''}" data-c="${i}" data-goto="${i}">`)
+    .replace(/(\d+)/g, (_, i) => `<mark class="anchor point" data-c="${i}" data-goto="${i}"></mark>`)
+    .replace(//g, '</mark>');
+  const balloons = all.map((c, i) => [c, i]).filter(([c]) => isComment(c) && c.at >= 0).map(([c, i]) => {
+    const d = D(c.id);
+    return `<li class="balloon ${d.status}" data-c="${i}" data-goto="${i}" title="Open ${no(c)} for review">
+      <div class="b-head"><span class="cm-tag">${no(c)}</span><span class="dot ${esc(c.significance)}" title="${esc(c.significance)}"></span>${MARK[d.status] ? `<span class="b-mark">${MARK[d.status]}</span>` : ''}</div>
+      <p class="b-title">${esc(c.title)}</p>
+      <p class="b-text">${esc(c.comment || '')}</p>
+    </li>`;
+  }).join('');
+  $('#full').innerHTML = `<div class="doc"><div class="prose">${html}</div>${balloons ? `<ol class="balloons" aria-label="Comments">${balloons}</ol>` : ''}</div>`;
+  // The first highlight of each comment carries its number, so text and balloon share a label.
+  const seen = new Set();
+  for (const m of $('#full').querySelectorAll('mark[data-c]')) {
+    if (seen.has(m.dataset.c)) continue;
+    seen.add(m.dataset.c);
+    m.insertAdjacentHTML('afterend', `<sup class="cm-ref" data-c="${m.dataset.c}" data-goto="${m.dataset.c}">${no(all[m.dataset.c])}</sup>`);
+  }
+  placeBalloons();
+}
+// Each balloon sits level with its highlight, or under the balloon above it when two are close.
+// A balloon pushed away from its highlight shows only its title, so a crowded margin stays near its text.
+function placeBalloons() {
+  const rail = $('#full .balloons'); if (!rail) return;
+  if (getComputedStyle(rail).position !== 'relative') { for (const b of rail.children) b.style.top = ''; rail.style.height = ''; return; }
+  const top0 = rail.getBoundingClientRect().top;
+  let floor = 0;
+  for (const b of rail.children) {
+    const m = $(`#full mark[data-c="${b.dataset.c}"]`);
+    const want = m ? m.getBoundingClientRect().top - top0 - 4 : floor;
+    const y = Math.max(want, floor);
+    b.classList.toggle('tight', y - want > 24);
+    b.style.top = y + 'px';
+    floor = y + b.offsetHeight + 10;
+  }
+  rail.style.height = floor + 'px';
+}
+// Pointing at a highlight lights its balloon, and the reverse.
+function linkHover(e) {
+  for (const h of $('#full').querySelectorAll('.hot')) h.classList.remove('hot');
+  const el = e.type === 'mouseover' && e.target.closest?.('[data-c]');
+  if (el) for (const h of $('#full').querySelectorAll(`[data-c="${el.dataset.c}"]`)) h.classList.add('hot');
 }
 
 function sizeNotice() {
@@ -465,16 +600,21 @@ function sizeNotice() {
 
 // ---------- Events ----------
 function download(name, text, type) {
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([text], { type })), download: name });
+  const blob = text instanceof Blob ? text : new Blob([text], { type });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name });
   a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 function bind() {
   $('#runSelect').addEventListener('change', (e) => { location.hash = e.target.value; });
   window.addEventListener('hashchange', route);
-  window.addEventListener('resize', () => { sizeNotice(); if (S.tab === 'changes' && S.run) placeCursor(); });
+  window.addEventListener('resize', () => { sizeNotice(); if (S.tab === 'changes' && S.run) placeCursor(); if (S.tab === 'full' && S.run) placeBalloons(); });
+  document.fonts?.ready.then(() => { if (S.tab === 'full' && S.run) placeBalloons(); });
+  $('#full').addEventListener('mouseover', linkHover);
+  $('#full').addEventListener('mouseleave', linkHover);
   $('#reviewer').addEventListener('change', (e) => { S.reviewer = e.target.value.trim(); try { localStorage.setItem('guidecheck:reviewer', S.reviewer); } catch { /* ignore */ } });
   for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => vt('tab', () => { S.tab = b.dataset.tab; render(); }));
+  $('#filterType').addEventListener('click', (e) => { const b = e.target.closest('[data-type]'); if (b) { S.filter.type = b.dataset.type; render(); } });
   $('#filterStatus').addEventListener('change', (e) => { S.filter.status = e.target.value; render(); });
   $('#filterSig').addEventListener('change', (e) => { S.filter.sig = e.target.value; render(); });
   $('#changeList').addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (b) select(Number(b.dataset.i)); });
@@ -482,6 +622,7 @@ function bind() {
   $('#full').addEventListener('click', (e) => { const f = e.target.closest('[data-goto]'); if (f) { S.tab = 'changes'; select(Number(f.dataset.goto)); } });
   $('#exportRevised').addEventListener('click', () => download('revised.md', revised(), 'text/markdown'));
   $('#exportDecisions').addEventListener('click', () => download('decisions.json', JSON.stringify(payload(), null, 2) + '\n', 'application/json'));
+  $('#exportDocx').addEventListener('click', exportDocx);
   const sheet = $('#sheet');
   sheet.addEventListener('click', (e) => {
     const sp = e.target.closest('[data-split]'); if (sp) return vt('same', () => { S.split = sp.dataset.split === '1'; renderSheet(); });
@@ -504,20 +645,59 @@ function bind() {
 }
 
 function startEdit() { if (current()?.at >= 0) vt('same', () => { S.editing = true; S.fresh = null; renderSheet(); }); }
-// The guides live in Word: copy the accepted wording as plain text (Markdown rendered, then tags dropped).
+// The guides live in Word: copy as plain text (Markdown rendered, then tags dropped).
+const plain = (t) => new DOMParser().parseFromString(md(t), 'text/html').body.textContent.replace(/\n{3,}/g, '\n\n').trim();
+function copyFor(c) {
+  const d = D(c.id);
+  if (!isComment(c)) return plain(d.status === 'edited' ? d.text : c.proposed);
+  const sug = wording(c), cites = (c.sources || []).map((id) => S.run.sources.find((s) => s.id === id)?.citation).filter(Boolean);
+  return [plain(c.comment || ''), sug ? `Suggested wording:\n${plain(sug)}` : sug === '' ? 'Suggested: remove the passage.' : '', cites.length ? `Sources:\n${cites.join('\n')}` : '']
+    .filter(Boolean).join('\n\n');
+}
+// Word file for review: approved corrections applied, accepted comments as Word comments on their passages.
+async function exportDocx() {
+  const btn = $('#exportDocx'), label = btn.firstChild, idle = label.textContent;
+  const all = S.run.changes, comments = [];
+  let src = '', pos = 0;
+  for (const c of all) {
+    if (c.at < 0) continue;
+    const d = D(c.id);
+    src += S.original.slice(pos, c.at);
+    if (isComment(c) && (d.status === 'approved' || d.status === 'edited')) {
+      const id = comments.length;
+      comments.push({
+        id, author: `Guidecheck · ${S.run.agent}`, initials: 'GC', date: d.at.replace(/\.\d+Z$/, 'Z'),
+        paragraphs: [{ text: `${no(c)} · ${c.title}`, bold: true }, ...copyFor(c).split(/\n+/).map((text) => ({ text })),
+          ...(d.note ? [{ text: `Note${d.by ? ` from ${d.by}` : ''}: ${d.note}` }] : [])],
+      });
+      src += DOCX.wrap(c.original, id);
+    } else src += textFor(c);
+    pos = c.at + c.original.length;
+  }
+  src += S.original.slice(pos);
+  label.textContent = 'Building…';
+  try {
+    const title = S.runs.find((r) => r.guide === S.run.guide)?.guideTitle || S.run.guide;
+    const { blob } = await DOCX.build({ markdown: src, comments, base: `runs/${S.run.guide}/${S.run.runId}/`, title });
+    download(`${S.run.guide}-${S.run.runId}-review.docx`, blob);
+    label.textContent = idle;
+  } catch (e) {
+    label.textContent = `Not built: ${e.message}`;
+    setTimeout(() => { label.textContent = idle; }, 4000);
+  }
+}
 async function copyText() {
-  const c = current(), d = D(c.id), label = $('[data-act="copy"] span');
+  const c = current(), label = $('[data-act="copy"] span');
   if (!label) return;
-  const html = md(d.status === 'edited' ? d.text : c.proposed);
-  const text = new DOMParser().parseFromString(html, 'text/html').body.textContent.replace(/\n{3,}/g, '\n\n').trim();
-  try { await navigator.clipboard.writeText(text); label.textContent = 'Copied'; }
+  const idle = label.textContent;
+  try { await navigator.clipboard.writeText(copyFor(c)); label.textContent = 'Copied'; }
   catch { label.textContent = 'Copy failed: select the text by hand'; }
-  setTimeout(() => { if (label.isConnected) label.textContent = 'Copy text'; }, 1600);
+  setTimeout(() => { if (label.isConnected) label.textContent = idle; }, 1600);
 }
 function cancelEdit() { vt('same', () => { S.editing = false; renderSheet(); }); }
 function saveEdit() {
   const c = current(), text = $('#editText').value;
-  if (text === c.proposed) decide('approved'); else decide('edited', { text });
+  if (text === (isComment(c) ? c.suggestion : c.proposed)) decide('approved'); else decide('edited', { text });
 }
 
 function onKey(e) {

@@ -25,7 +25,7 @@ A run folder contains these files:
 | `report.md` | agent | Full assessment, parts 1 to 8 of the prompt |
 | `run.json` | agent | Structured result: verdict, changes, sources |
 | `decisions.json` | interface | Approve, reject, or edit decision for each change |
-| `revised.md` | interface | `original.md` with the approved and edited changes applied |
+| `revised.md` | interface | `original.md` with the approved and edited corrections applied. Comments do not change the text. |
 
 Use lowercase letters, digits, and hyphens for `<guide>`. Use `YYYY-MM-DD-<agent>` for `<runId>`, for example `2026-10-21-claude`.
 
@@ -91,12 +91,16 @@ Do these steps when the user asks you to check, update, or assess a guide.
 
 ### Rules for changes
 
+Each item in `changes` is a comment or a correction. Part 9 of the prompt defines both.
+
+- Write a finding about content as a comment (`"type": "comment"`). A comment does not change the text. The editor reads it like a comment in Word.
+- Write a correction (`"type": "correction"`) only for an error of form: a typing error, a spelling, grammar, or punctuation error, or a broken cross-reference. If the fix changes the meaning, write a comment.
 - Copy `original` exactly from `original.md`, including Markdown characters and line breaks. Do not correct typing errors in the copy.
 - Select a passage that occurs exactly one time. If a sentence occurs two times, include more of the text around it.
-- Keep each change small: one claim, one paragraph, or one reference. Small changes are fast to review.
-- Do not let two changes overlap.
-- Keep the voice, terms, and Markdown style of the guide in `proposed`.
-- If you add a citation in the text, also add the reference to the reference list. Make the reference list entry a separate change.
+- For a comment, select the shortest passage that the comment refers to: one sentence, one list item, or one reference entry.
+- Do not let two items overlap.
+- Keep the voice, terms, and Markdown style of the guide in `suggestion` and `proposed`.
+- If a comment adds a citation, write a second comment on the reference list for the reference entry.
 - Use `significance` and `direction` as part 2 and part 4 of the prompt define them.
 - Do not propose a change only because newer literature exists. Part 6 of the prompt gives the threshold.
 
@@ -120,4 +124,4 @@ Do these steps only when the user asks you to adopt or publish a reviewed run.
 
 - Do not edit `original.md`, `decisions.json`, or `revised.md` of a run that a human started to review.
 - Do not edit `guides/<guide>/guide.md` during a run.
-- Do not change the interface files (`index.html`, `app.js`, `styles.css`, `server.mjs`) during a run.
+- Do not change the interface files (`index.html`, `app.js`, `docx.js`, `styles.css`, `server.mjs`) during a run.
