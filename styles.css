@@ -237,6 +237,8 @@ kbd { font: 500 11px/1 var(--mono); padding: 2px 5px; border-radius: 3px; border
 .src dd { margin: 0; color: var(--ink-2); }
 .src .links { display: flex; gap: 12px; margin-top: 8px; font: 12.5px var(--mono); flex-wrap: wrap; }
 .src .links a { overflow-wrap: anywhere; }
+.src .links .pdf { display: inline-flex; gap: 4px; align-items: center; font-weight: 600; }
+.src .links .pdf svg { width: 14px; height: 14px; }
 .no-source { color: var(--amber); padding: 10px 0; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; font-size: 13.5px; }
 .keys { margin-top: 28px; font-size: 12px; color: var(--ink-3); display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center; }
 .keys kbd { justify-self: start; }

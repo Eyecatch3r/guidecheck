@@ -2,3 +2,5 @@
 .impeccable/build/
 .impeccable/config.local.json
 node_modules/
+library/*.pdf
+library/index.json

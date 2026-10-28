@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Guidecheck local server. Node standard library only.
 //   node server.mjs            serve the review interface on http://localhost:4173 (read-write)
-//   node server.mjs --index    rebuild runs/index.json
+//   node server.mjs --index    rebuild runs/index.json and library/index.json
 //   node server.mjs --check    validate every run (or: --check runs/<guide>/<runId>)
 import { createServer } from 'node:http';
 import { readFile, writeFile, readdir, stat } from 'node:fs/promises';
@@ -43,6 +43,11 @@ export async function buildIndex() {
   }
   runs.sort((a, b) => a.guideTitle.localeCompare(b.guideTitle) || b.runId.localeCompare(a.runId));
   await writeFile(join(RUNS, 'index.json'), JSON.stringify({ runs }, null, 2) + '\n');
+  // The PDF source archive. The PDFs and this list stay out of Git (.gitignore).
+  try {
+    const files = (await readdir(join(ROOT, 'library'))).filter((f) => f.endsWith('.pdf')).sort();
+    await writeFile(join(ROOT, 'library', 'index.json'), JSON.stringify({ files }, null, 2) + '\n');
+  } catch {}
   return runs;
 }
 

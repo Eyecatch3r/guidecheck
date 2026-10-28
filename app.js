@@ -11,7 +11,8 @@ const ICON = {
   copy: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1"/><path d="M10.5 3.5v-1h-8v8h1"/></svg>',
   undo: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 3L2.5 6l3 3"/><path d="M2.5 6H10a3.5 3.5 0 010 7H7"/></svg>',
   warn: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l6.5 11.5h-13z"/><path d="M8 6.5v3M8 11.6v.1"/></svg>',
-  up: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l4-4 4 4"/></svg>',
+  doc: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M4 1.5h5.5l3 3v10h-8.5z"/><path d="M9.5 1.5v3h3"/></svg>',
+  up: '<svgviewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l4-4 4 4"/></svg>',
   down: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>',
 };
 
@@ -28,9 +29,11 @@ const MARK = { approved: 'OK', rejected: 'stet', edited: 'amended' };
 // Two kinds of finding. A correction fixes an error of form in the text. A comment is anchored to a passage and leaves the text as it is.
 const isComment = (c) => c.type === 'comment';
 const TYPE = { comment: 'Comment', correction: 'Correction' };
+// Archive file name of a DOI. Same rule as openalex.mjs.
+const pdfName = (doi) => doi.toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '').replace(/[^a-z0-9.-]+/g, '_') + '.pdf';
 
 const S = {
-  runs: [], writable: false, run: null, original: '', report: '', dec: {},
+  runs: [], library: new Set(), writable: false, run: null, original: '', report: '', dec: {},
   i: 0, tab: 'changes', split: false, editing: false, fresh: null,
   filter: { type: 'all', status: 'all', sig: 'all' }, reviewer: '',
 };
@@ -239,6 +242,7 @@ async function init() {
   $('#reviewer').value = S.reviewer;
   S.writable = await fetch('api/status', { cache: 'no-store' }).then((r) => r.ok && r.headers.get('content-type')?.includes('json')).catch(() => false);
   S.runs = (await fetchJSON('runs/index.json'))?.runs || [];
+  S.library = new Set((await fetchJSON('library/index.json'))?.files || []);
   if (!S.runs.length) return showState('No runs yet', `<p>Ask your agent to check a guide. In Claude Code, type:</p><pre>/check-guide &lt;guide&gt;</pre><p>In Codex, write: <q>Run an update check on guides/&lt;guide&gt;. Obey AGENTS.md.</q> Then reload this page.</p>`);
   const sel = $('#runSelect');
   const groups = Map.groupBy ? Map.groupBy(S.runs, (r) => r.guideTitle) : S.runs.reduce((m, r) => m.set(r.guideTitle, [...(m.get(r.guideTitle) || []), r]), new Map());
@@ -451,14 +455,18 @@ function galley(a, b, ink) {
 function sourceItem(s) {
   const doi = s.doi ? `<a href="https://doi.org/${esc(s.doi)}" target="_blank" rel="noopener">doi:${esc(s.doi)}</a>` : '';
   const url = s.url && !s.url.includes(s.doi || '\u0000') ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url.replace(/^https?:\/\//, '').slice(0, 48))}${s.url.length > 56 ? '…' : ''}</a>` : '';
+  // The archived copy: a path that the agent set, or the file of the DOI in library/.
+  const file = s.pdf || (s.doi && S.library.has(pdfName(s.doi)) ? 'library/' + pdfName(s.doi) : '');
+  const pdf = file ? `<a class="pdf" href="${esc(encodeURI(file))}" target="_blank" rel="noopener">${ICON.doc}Open PDF</a>` : '';
+  const oa = s.openalex ? `<a href="https://openalex.org/works/${esc(s.openalex)}" target="_blank" rel="noopener">OpenAlex</a>` : '';
   return `<li class="src" id="src-${esc(s.id)}">
-    <div class="src-meta"><span class="id">${esc(s.id)}</span><span class="src-type">${esc(SOURCE_TYPE[s.type] || s.type)}</span>${s.year ? `<span class="num">${esc(s.year)}</span>` : ''}${s.venue ? `<span>${esc(s.venue)}</span>` : ''}</div>
+    <div class="src-meta"><span class="id">${esc(s.id)}</span><span class="src-type">${esc(SOURCE_TYPE[s.type] || s.type)}</span>${s.year ? `<span class="num">${esc(s.year)}</span>` : ''}${s.venue ? `<span>${esc(s.venue)}</span>` : ''}${s.citedByCount != null ? `<span title="Citations in OpenAlex">Cited by <span class="num">${esc(s.citedByCount)}</span></span>` : ''}</div>
     <p class="cite">${esc(s.citation)}</p>
     ${s.verified
       ? `<p class="verify ok">${ICON.check}<span>Verified by the agent${s.verificationNote ? `. ${esc(s.verificationNote)}` : ''}</span></p>`
       : `<p class="verify no">${ICON.warn}<span><b>Not verified.</b> ${esc(s.verificationNote || 'The agent could not open this source. Check it before you approve.')}</span></p>`}
     <dl>${s.finding ? `<div><dt>Finding</dt><dd>${esc(s.finding)}</dd></div>` : ''}${s.relevance ? `<div><dt>Relevance</dt><dd>${esc(s.relevance)}</dd></div>` : ''}</dl>
-    ${doi || url ? `<div class="links">${doi}${url}</div>` : ''}
+    ${pdf || doi || url || oa ? `<div class="links">${pdf}${doi}${url}${oa}</div>` : ''}
   </li>`;
 }
 

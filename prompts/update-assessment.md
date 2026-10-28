@@ -174,6 +174,8 @@ Report:
 
 Where possible, triangulate important findings across multiple independent sources.
 
+In Guidecheck, take every scholarly source from OpenAlex (`node openalex.mjs`), so that all citations have the same form. Use web pages only for material that is not scholarly literature, for example documentation, standards, and laws. `AGENTS.md` describes the OpenAlex workflow. Report the citation counts from OpenAlex as evidence of influence, with the date of the count.
+
 Do not fabricate citations, DOIs, publication dates, journal metrics, findings, or claims about scholarly consensus. If information cannot be verified, explicitly state that it could not be verified.
 
 For every important claim about a new finding, provide a verifiable citation.

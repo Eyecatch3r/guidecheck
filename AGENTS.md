@@ -15,6 +15,8 @@ prompts/update-assessment.md   base prompt for every run
 schema/run.schema.json         format of run.json
 runs/<guide>/<runId>/          one folder per run (see below)
 runs/index.json                list of all runs, made by `node server.mjs --index`
+openalex.mjs                   OpenAlex search and the PDF archive (see "OpenAlex workflow")
+library/<doi>.pdf              archived source PDFs, not in Git
 ```
 
 A run folder contains these files:
@@ -71,9 +73,15 @@ Do these steps when the user asks you to check, update, or assess a guide.
 2. Make the run folder `runs/<guide>/<runId>/`.
 3. Copy `guides/<guide>/guide.md` to `runs/<guide>/<runId>/original.md`. Do not change this copy after this step.
 4. Read the prompt. Use `guides/<guide>/prompt.md` if it exists. If not, use `prompts/update-assessment.md`. Fill the placeholders from `guide.json`.
-5. Do the assessment that the prompt describes. Use web search and scholarly sources. Record every search in `report.md`, part 7.
+5. Do the assessment that the prompt describes. Start with the OpenAlex workflow below, then use web search and other scholarly sources. Record every search in `report.md`, part 7.
 6. Write `report.md` with parts 1 to 8.
-7. Write `run.json`. Obey part 9 of the prompt and `schema/run.schema.json`.
+7. Write `run.json`. Obey part 9 of the prompt and `schema/run.schema.json`. Then replace the metadata of the scholarly sources with the OpenAlex records:
+
+   ```bash
+   node openalex.mjs sync runs/<guide>/<runId>
+   ```
+
+   If the command reports a problem, correct the source and run the command again.
 8. Run the check:
 
    ```bash
@@ -88,6 +96,51 @@ Do these steps when the user asks you to check, update, or assess a guide.
     ```
 
 11. Tell the user the verdict, the number of changes, and the command to open the interface: `node server.mjs`.
+
+### OpenAlex workflow
+
+Use `openalex.mjs` in step 5. It needs no account. OpenAlex is the source of record for scholarly literature: journal articles, preprints, books, chapters, and conference papers. Every scholarly source in `run.json` comes from OpenAlex, so that all citations have the same form and every work has an ID and a citation count.
+
+1. If `guide.json` has a DOI, list the works that cite the guide:
+
+   ```bash
+   node openalex.mjs citing <guide> --limit 50
+   ```
+
+2. Search for each central topic of the guide. The command shows only works after the guide date:
+
+   ```bash
+   node openalex.mjs search <guide> "<terms>" --limit 25
+   ```
+
+3. For each scholarly source that you use, get its record:
+
+   ```bash
+   node openalex.mjs work <doi> --json
+   ```
+
+   - Copy `citation`, `doi`, `openalex`, `year`, `venue`, and `citedByCount` into the source in `run.json`. Do not write the citation yourself. The `citation` is APA 7 from the DOI registry, or from OpenAlex if the work has no DOI.
+   - A result from `work` counts as an opened registry entry for `verified`.
+   - If `retracted` is true, do not use the work as evidence. Say so in the report.
+   - `openalexType` is not the same as `type`. Decide `type` yourself. A journal article is not always peer-reviewed.
+   - If you found a work outside OpenAlex (for example, through web search), look it up with `work` before you cite it.
+4. For each source with an open access PDF (`oaPdf`), archive the PDF:
+
+   ```bash
+   node openalex.mjs fetch <doi>
+   ```
+
+   If the command finds no PDF, continue. Do not try other download sites. Tell the user which sources have no PDF, so the user can add them with `node openalex.mjs add <file.pdf> <doi>`.
+5. Record the OpenAlex searches, with terms and result counts, in `report.md`, part 7. Add "OpenAlex" to `search.databases`.
+
+6. After you write `run.json`, run `sync` (Task 2, step 7). The command does these things for each source with a DOI or an OpenAlex ID:
+   - It replaces `citation`, `year`, `venue`, `openalex`, and `citedByCount` with the record.
+   - It does not change a source if the DOI belongs to a different work, or if the DOI is not in OpenAlex.
+   - It reports a peer-reviewed, preprint, or book source without a DOI.
+
+Web pages, software documentation, standards, laws, and institutional pages are not in OpenAlex. Cite them from the page itself, with `url` and without `openalex`. Some books and reports are also missing from OpenAlex. Do not treat "not in OpenAlex" as "does not exist". In that case, write the citation in APA 7 yourself and say so in `verificationNote`.
+
+The metadata in the registry is as the publisher registered it. Some titles are short (no subtitle) or in title case. Do not correct them by hand. The reviewer sees the DOI link.
 
 ### Rules for changes
 
@@ -107,6 +160,7 @@ Each item in `changes` is a comment or a correction. Part 9 of the prompt define
 ### Rules for sources
 
 - Do not invent a citation, DOI, date, page number, or finding.
+- Take every scholarly source from OpenAlex (see "OpenAlex workflow"). Use a web page as a source only for material that is not scholarly literature.
 - Set `verified: true` only if you opened the source or its registry entry (doi.org, Crossref, publisher page, EUR-Lex, W3C) in this run.
 - If you could not open the source, set `verified: false`. Write what you could not check in `verificationNote`.
 - Set `type` correctly. A preprint is not `peer-reviewed`.

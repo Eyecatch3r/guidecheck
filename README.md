@@ -141,6 +141,38 @@ The Word file is made from the Markdown version of the guide. Headings, lists, t
 2. Tell the agent: "Adopt run `<runId>` of `<guide>`." The agent copies `revised.md` to `guides/<guide>/guide.md`.
 3. Commit the changed files.
 
+## Find literature with OpenAlex
+
+The agent uses [OpenAlex](https://openalex.org/) to find later work and to verify sources. You can use the same commands:
+
+```bash
+node openalex.mjs citing survey-sampling
+node openalex.mjs search survey-sampling "mobile web survey breakoff"
+node openalex.mjs work 10.1177/0894439318766836
+```
+
+- `citing` lists the works that cite the guide after its publication date, most cited first. The guide needs a DOI in `guide.json`.
+- `search` lists the works on the search terms after the publication date of the guide.
+- `work` shows the record of one work: OpenAlex ID, APA citation, authors, venue, citation count, retraction status, and the open access PDF.
+- `sync` replaces the metadata of each scholarly source in a run with its OpenAlex record. The agent runs it after it writes `run.json`.
+- Add `--json` for the full result and `--limit N` for more or fewer results (the default is 25).
+
+Every scholarly source in a run comes from OpenAlex, so that all citations have the same form. The APA text comes from the DOI registry, formatted with the same CSL APA style that Zotero uses. OpenAlex gives the ID, the citation count, the retraction status, and the open access PDF. `sync` does not change a source if its DOI belongs to a different work. Web pages, standards, and laws stay as the agent cites them.
+
+OpenAlex needs no account. To use your own quota, set `OPENALEX_API_KEY` or `OPENALEX_MAILTO`.
+
+## Archive source PDFs
+
+The `library/` folder keeps a PDF copy of the sources, like the attachments in Zotero. If a PDF of a source is in the archive, the source shows an **Open PDF** link. The link opens the PDF in a new browser tab.
+
+- To download the open access PDF of a work, run `node openalex.mjs fetch <doi>`. The command tries each open access location that OpenAlex knows.
+- If no open access PDF exists, download the PDF yourself (for example, through your library), then run `node openalex.mjs add <file.pdf> <doi>`.
+- After you add PDFs, run `node server.mjs --index` or restart the server. Then reload the interface.
+
+The file name in the archive comes from the DOI, so the interface finds the PDF of a source by its DOI. For a source without a DOI, the agent sets `pdf` in `run.json` to the path of the file.
+
+Git ignores the archive. Most publishers do not permit you to publish their PDFs. The archive stays on your computer and does not show in the GitHub Pages demo.
+
 ## Repository structure
 
 ```
@@ -153,6 +185,8 @@ runs/index.json                list of runs for the interface
 index.html, app.js, styles.css interface (no build step)
 docx.js                        Word export: builds the .docx in the browser
 server.mjs                     local server, run check, and index builder
+openalex.mjs                   OpenAlex search and the PDF archive
+library/                       archived source PDFs (not in Git)
 .claude/commands/              /add-guide and /check-guide for Claude Code
 ```
 

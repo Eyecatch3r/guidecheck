@@ -286,6 +286,19 @@
           "url": {
             "type": "string"
           },
+          "openalex": {
+            "type": "string",
+            "pattern": "^W[0-9]+$",
+            "description": "OpenAlex work ID, from 'node openalex.mjs work <doi>'."
+          },
+          "citedByCount": {
+            "type": "integer",
+            "description": "Citations in OpenAlex on the run date."
+          },
+          "pdf": {
+            "type": "string",
+            "description": "Path of the archived PDF, for example 'library/10.1000_xyz.pdf'. Leave it out if the file name follows from the DOI."
+          },
           "type": {
             "enum": [
               "peer-reviewed",
